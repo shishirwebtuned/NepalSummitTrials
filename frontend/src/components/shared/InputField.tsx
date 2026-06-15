@@ -6,7 +6,7 @@ const InputField = ({
   register,
   name = "input",
   errors = {},
-  label = "Input",
+  label,
   required = false,
   type = "text",
   placeholder = "Enter text",
@@ -33,10 +33,12 @@ const InputField = ({
 }) => {
   return (
     <div className="w-full">
-      <label htmlFor={name} className="block text-sm jakarta mb-1">
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
+      {label && (
+        <label htmlFor={name} className="block text-sm jakarta mb-1">
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
       <div className="relative">
         <input
           {...register(name, validationRules)}
