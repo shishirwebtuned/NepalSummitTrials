@@ -1,13 +1,14 @@
 
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import Image from "next/image";
 
 const Features = () => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const animationRef = useRef<number | null>(null);
 
   const trails = [
     {
@@ -84,6 +85,41 @@ const Features = () => {
       image: "/images/Rectangle 19(2).png",
     },
   ];
+
+  const smoothScrollBy = useCallback((distance: number) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
+
+    const start = container.scrollLeft;
+    const target = start + distance;
+    const duration = 500;
+    let startTime: number | null = null;
+
+    const easeInOutCubic = (t: number) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    const step = (timestamp: number) => {
+      if (startTime === null) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeInOutCubic(progress);
+
+      container.scrollLeft = start + (target - start) * eased;
+
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(step);
+      } else {
+        animationRef.current = null;
+      }
+    };
+
+    animationRef.current = requestAnimationFrame(step);
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       if (scrollContainerRef.current) {
@@ -105,6 +141,12 @@ const Features = () => {
         scrollContainer.removeEventListener("scroll", handleScroll);
       };
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
   }, []);
 
   return (
@@ -133,61 +175,83 @@ const Features = () => {
           </h2>
           <div className="flex items-center justify-center mt-4">
             <div className="w-32 h-px bg-[#0B2839]"></div>
-            <div className="mx-3 w-[101px] h-[34px] bg-[#0B2839] rounded"></div>
+            <img
+              src="/images/icons/765737_09 1.png"
+              alt="Mountain icon"
+              className="mx-3 w-[101px] h-[34px]"
+            />
             <div className="w-32 h-px bg-[#0B2839]"></div>
           </div>
         </div>
 
         {/* Trail cards */}
-        <div
-          ref={scrollContainerRef}
-          className="overflow-x-auto scrollbar-hide"
-        >
-          <div className="flex gap-6 min-w-fit px-1">
-            {trails.map((trail) => (
-              <div
-                key={trail.id}
-                className="relative md:min-w-[280px] min-w-[240px] group transition-all ease-linear duration-700 cursor-pointer rounded-[106px] overflow-hidden"
-              >
-                <div className="relative flex items-end justify-center p-2 h-[400px] overflow-hidden">
-                  <Image
-                    src={trail.image || "/placeholder.svg"}
-                    alt={trail.name}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-in-out transform group-hover:scale-125 group-hover:translate-y-10 group-hover:translate-x-4"
-                  />
+        <div className="relative">
+          {/* Left arrow */}
+          <button
+            onClick={() => smoothScrollBy(-320)}
+            className="flex absolute -left-9 md:-left-14 top-1/2 -translate-y-1/2 z-20 w-7.5 h-7.5 md:w-10 md:h-10 items-center justify-center rounded-full shadow-lg bg-[#2A78A6] text-white transition-all duration-300 cursor-pointer"
+          >
+            <ChevronLeft className="md:w-5 md:h-5 w-4 h-4" />
+          </button>
 
-                  <div className="relative px-4 py-4 text-center bg-[#E3E3E3] group-hover:bg-[#2A78A6] rounded-b-[106px] mb-1 mx-2 transition-all duration-700 ease-in-out">
-                    <div className="absolute bg-[#E3E3E3] group-hover:bg-[#2A78A6] rounded-full p-2 -top-6 left-1/2 transform -translate-x-1/2 transition-all duration-700 ease-in-out">
-                      <div className="z-10 bg-[#2A78A6] group-hover:bg-white group-hover:text-[#2A78A6] text-white px-5 py-2 rounded-full text-sm font-bold shadow-md transition-all duration-700 ease-in-out">
-                        {trail.price}
+          {/* Right arrow */}
+          <button
+            onClick={() => smoothScrollBy(320)}
+            className="flex absolute -right-9 md:-right-14 top-1/2 -translate-y-1/2 z-20 w-7.5 h-7.5 md:w-10 md:h-10 items-center justify-center rounded-full  shadow-lg bg-[#2A78A6] text-white text-[#2A78A6] transition-all duration-300 cursor-pointer"
+          >
+            <ChevronRight className="md:w-5 md:h-5 w-4 h-4" />
+          </button>
+
+          <div
+            ref={scrollContainerRef}
+            className="overflow-x-auto scrollbar-hide"
+          >
+            <div className="flex gap-6 min-w-fit px-1">
+              {trails.map((trail) => (
+                <div
+                  key={trail.id}
+                  className="relative md:min-w-[280px] min-w-[240px] group transition-all ease-linear duration-700 cursor-pointer rounded-[106px] overflow-hidden"
+                >
+                  <div className="relative flex items-end justify-center p-2 h-[400px] overflow-hidden">
+                    <Image
+                      src={trail.image || "/placeholder.svg"}
+                      alt={trail.name}
+                      fill
+                      className="object-cover transition-transform duration-700 ease-in-out transform group-hover:scale-125 group-hover:translate-y-10 group-hover:translate-x-4"
+                    />
+
+                    <div className="relative px-4 py-4 text-center bg-[#E3E3E3] group-hover:bg-[#2A78A6] rounded-b-[106px] mb-1 mx-2 transition-all duration-700 ease-in-out">
+                      <div className="absolute bg-[#E3E3E3] group-hover:bg-[#2A78A6] rounded-full p-2 -top-6 left-1/2 transform -translate-x-1/2 transition-all duration-700 ease-in-out">
+                        <div className="z-10 bg-[#2A78A6] group-hover:bg-white group-hover:text-[#2A78A6] text-white px-5 py-2 rounded-full text-sm font-bold shadow-md transition-all duration-700 ease-in-out">
+                          {trail.price}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex items-center mb-1 text-xs mt-7 group-hover:text-[#D5E880] text-gray-600 justify-center transition-all duration-700 ease-in-out">
-                      <Clock
-                        size={16}
-                        className="text-gray-700 group-hover:text-[#D5E880] transition-all duration-700 ease-in-out mr-1"
-                      />
-                      {trail.days} Days
-                    </div>
+                      <div className="flex items-center mb-1 text-xs mt-7 group-hover:text-[#D5E880] text-gray-600 justify-center transition-all duration-700 ease-in-out">
+                        <Clock
+                          size={16}
+                          className="text-gray-700 group-hover:text-[#D5E880] transition-all duration-700 ease-in-out mr-1"
+                        />
+                        {trail.days} Days
+                      </div>
 
-                    <h3 className="mb-1 text-sm font-bold text-black group-hover:text-white transition-all duration-700 ease-in-out">
-                      {trail.name}
-                    </h3>
-                    <p className="mb-2 text-xs group-hover:text-white text-gray-600 transition-all duration-700 ease-in-out">
-                      {trail.description}
-                    </p>
+                      <h3 className="mb-1 text-sm font-bold text-black group-hover:text-white transition-all duration-700 ease-in-out">
+                        {trail.name}
+                      </h3>
+                      <p className="mb-2 text-xs group-hover:text-white text-gray-600 transition-all duration-700 ease-in-out">
+                        {trail.description}
+                      </p>
 
-                    <div className="flex justify-center">
-                      <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full shadow-lg group-hover:bg-[#D5E880] transition-all duration-700 ease-in-out">
-                        <ArrowRight size={14} className="text-[#2A78A6]" />
+                      <div className="flex justify-center">
+                        <div className="flex items-center justify-center w-6 h-6 bg-white rounded-full shadow-lg group-hover:bg-[#D5E880] transition-all duration-700 ease-in-out">
+                          <ArrowRight size={14} className="text-[#2A78A6]" />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 

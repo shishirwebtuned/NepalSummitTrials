@@ -1,6 +1,7 @@
 
 
-import React from "react";
+import React, { useState } from "react";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const InputField = ({
   register,
@@ -31,6 +32,11 @@ const InputField = ({
   iconClassName?: string;
   [key: string]: unknown;
 }) => {
+
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === "password";
+  const inputType = isPassword ? (showPassword ? "text" : "password") : type;
+
   return (
     <div className="w-full">
       {label && (
@@ -42,19 +48,30 @@ const InputField = ({
       <div className="relative">
         <input
           {...register(name, validationRules)}
-          type={type}
+          type={inputType}
           id={name}
           placeholder={placeholder}
-          className={`w-full px-4 py-2 lg:text-base md:text-sm text-xs rounded-lg bg-white text-gray-800 focus:outline-none border border-[#c0c0c0] appearance-none placeholder:text-gray-400 placeholder:opacity-60 ${icon ? "pr-10" : ""
+          className={`w-full px-4 py-2 lg:text-base md:text-sm text-xs rounded-lg bg-white text-gray-800 focus:outline-none border border-[#c0c0c0] appearance-none placeholder:text-gray-400 placeholder:opacity-60 ${icon || isPassword ? "pr-10" : ""
             } ${className}`}
           {...inputProps}
         />
-        {icon && (
-          <div
-            className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${iconClassName}`}
+        {isPassword ? (
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            tabIndex={-1}
           >
-            {icon}
-          </div>
+            {showPassword ? <FiEyeOff className="size-3 md:size-4.5" /> : <FiEye className="size-3 md:size-4.5" />}
+          </button>
+        ) : (
+          icon && (
+            <div
+              className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${iconClassName}`}
+            >
+              {icon}
+            </div>
+          )
         )}
       </div>
       {errors[name] && (

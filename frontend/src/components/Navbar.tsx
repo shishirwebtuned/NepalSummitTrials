@@ -8,33 +8,41 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
 
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/trips", label: "Trips" },
-  {
-    label: "Trekking",
-    children: [
-      { href: "/trek-detail/1", label: "Everest Base Camp Trek" },
-      { href: "/annapurna-circuit-trek", label: "Annapurna Circuit Trek" },
-      { href: "/langtang-valley-trek", label: "Langtang Valley Trek" },
-      { href: "/manaslu-circuit-trek", label: "Manaslu Circuit Trek" },
-      { href: "/upper-mustang-trek", label: "Upper Mustang Trek" },
-      { href: "/dolpo-trek", label: "Dolpo Trek" },
-    ],
-  },
+type TrekNavItem = {
+  id: string
+  name: string
+  slug: string
+}
 
-  { href: "/aboutus", label: "Company" },
-  { href: "/blog", label: "Blog" },
-];
 
-const Navbar = () => {
+
+const Navbar = ({ treks }: { treks: TrekNavItem[] }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null); // desktop hover
   const [mobileOpenDropdown, setMobileOpenDropdown] = useState<string | null>(null); // mobile toggle
 
+  const navLinks = [
+    { href: "/", label: "Home" },
+    // { href: "/Treks", label: "Treks" },
+    {
+      label: 'Treks',
+      children: treks.length > 0
+        ? treks.map((t) => ({
+          href: `/trek-detail/${t.slug}`,
+          label: t.name,
+        }))
+        : [{ href: '/treks', label: 'View all treks' }],
+    },
+    { href: "/trek-match", label: "Trek Match" },
+    { href: "/aboutus", label: "About" },
+    { href: "/blog", label: "Blog" },
+  ];
+
   const pathname = usePathname();
   const isTrekDetailPage = /^\/trek-detail\/[^/]+$/.test(pathname);
+  const isTrekMatchPage = pathname === "/trek-match";
+  const isEitherTrekPage = isTrekDetailPage || isTrekMatchPage;
 
   const borderVariants = {
     initial: { scaleX: 0, opacity: 0, originX: 0.5 },
@@ -97,7 +105,7 @@ const Navbar = () => {
     <nav className="w-full jakarta mb-[-100px] z-50">
       {/* Top Contact Bar */}
       <div
-        className={`${isTrekDetailPage ? "bg-[#0B2839]" : "bg-[#477ca7]"
+        className={`${isEitherTrekPage ? "bg-[#0B2839]" : "bg-[#477ca7]"
           } py-2 px-4 md:px-8 text-white`}
       >
         <div
@@ -135,7 +143,7 @@ const Navbar = () => {
 
       {/* Main Navigation */}
       <div
-        className={`transition-all duration-300 ease-linear ${isTrekDetailPage ? "bg-white text-black" : "text-white"
+        className={`transition-all duration-300 ease-linear ${isEitherTrekPage ? "bg-white text-black" : "text-white"
           } ${isScrolled || isMenuOpen ? "bg-[#0A5482]" : "bg-transparent"
           } py-2 px-4 md:px-8`}
       >
@@ -148,7 +156,7 @@ const Navbar = () => {
                 alt="Trekking Logo"
                 width={80}
                 height={80}
-                className={`${isTrekDetailPage ? "filter invert" : ""} w-full h-15`}
+                className={`${isEitherTrekPage ? "filter invert" : ""} w-full h-15`}
               />
             </Link>
           </div>

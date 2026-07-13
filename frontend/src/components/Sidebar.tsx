@@ -2,19 +2,39 @@
 'use client'
 import { logout } from '@/app/(pages)/dashboard/actions'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState, useTransition } from 'react'
+import toast from 'react-hot-toast'
 import { MdDashboard, MdArticle, MdTerrain, MdPeople, MdLogout } from 'react-icons/md'
+import LogoutModal from './LogoutModal'
 
 const links = [
     { href: '/dashboard', label: 'Overview', icon: MdDashboard },
     { href: '/dashboard/blogs', label: 'Blogs', icon: MdArticle },
     { href: '/dashboard/treks', label: 'Treks', icon: MdTerrain },
-    { href: '/dashboard/guides', label: 'Guides', icon: MdPeople },
+    // { href: '/dashboard/guides', label: 'Guides', icon: MdPeople },
 ]
 
 export default function Sidebar() {
     const pathname = usePathname()
+    const router = useRouter()
 
+    const [showLogoutModal, setShowLogoutModal] = useState(false)
+    const [isPending, startTransition] = useTransition()
+
+    const handleLogout = () => {
+        startTransition(async () => {
+            try {
+                await logout()
+                toast.success('Logged out successfully')
+                setShowLogoutModal(false)
+                setTimeout(() => router.push('/login'), 400)
+            } catch (err: any) {
+                toast.error('Failed to log out')
+                setShowLogoutModal(false)
+            }
+        })
+    }
     return (
         <>
             {/* ── Desktop sidebar (md+) ── */}
@@ -43,11 +63,12 @@ export default function Sidebar() {
                     })}
                 </nav>
 
-                <form action={logout}>
-                    <button className="flex items-center gap-3 px-3 py-2.5 text-white/50 hover:text-white text-sm w-full transition">
-                        <MdLogout className="text-base" /> Logout
-                    </button>
-                </form>
+                <button
+                    onClick={() => setShowLogoutModal(true)}
+                    className="flex items-center gap-3 px-3 py-2.5 text-white/50 hover:text-white text-sm w-full transition cursor-pointer"
+                >
+                    <MdLogout className="text-base" /> Logout
+                </button>
             </aside>
 
             {/* ── Mobile bottom nav ── */}
@@ -67,14 +88,21 @@ export default function Sidebar() {
                     )
                 })}
 
-                {/* Logout on mobile */}
-                <form action={logout}>
-                    <button className="flex flex-col items-center gap-0.5 px-3 py-1.5 text-white/50 hover:text-white transition">
-                        <MdLogout className="text-xl" />
-                        <span className="text-[10px]">Logout</span>
-                    </button>
-                </form>
+                <button
+                    onClick={() => setShowLogoutModal(true)}
+                    className="flex flex-col items-center gap-0.5 px-3 py-1.5 text-white/50 hover:text-white transition cursor-pointer"
+                >
+                    <MdLogout className="text-xl" />
+                    <span className="text-[10px]">Logout</span>
+                </button>
             </nav>
+
+            {showLogoutModal && (
+                <LogoutModal
+                    onConfirm={handleLogout}
+                    onCancel={() => setShowLogoutModal(false)}
+                />
+            )}
         </>
     )
 }

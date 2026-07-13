@@ -69,7 +69,7 @@ const Footer = () => {
   return (
     <>
       <div className="flex w-full flex-col justify-center">
-        <div className="relative translate-y-[60px]">
+        <div className="relative translate-y-[61px] ">
           <img src="/images/FooterPerson.png" />
         </div>
         <div className="bg-[#0B2839] relative">

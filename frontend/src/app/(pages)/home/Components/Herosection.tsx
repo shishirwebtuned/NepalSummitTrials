@@ -12,9 +12,10 @@ const Herosection = () => {
           initial={{ y: 200, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 2, ease: "easeOut" }}
-          className="text-5xl sm:text-7xl md:text-[150px] xl:text-[200px] font-bold mb-4 text-center tracking-wider saira bg-gradient-to-b from-[#FFFFFF] to-[#FFFFFF]/10 text-transparent bg-clip-text"
+          className="text-5xl sm:text-7xl md:text-[150px] xl:text-[160px] font-bold mb-4 text-center tracking-wider mange bg-gradient-to-b from-[#FFFFFF] to-[#FFFFFF]/10 text-transparent bg-clip-text"
         >
-          Adventure
+          {/* Adventure */}
+          Elite Escapes
         </motion.h1>
       </div>
 

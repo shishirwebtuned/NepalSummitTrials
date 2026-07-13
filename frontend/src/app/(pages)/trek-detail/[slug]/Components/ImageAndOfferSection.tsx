@@ -2,38 +2,61 @@
 import React, { useState } from "react";
 import { IoLocation } from "react-icons/io5";
 
-const ImageAndOfferSection = () => {
-  const [activeImage, setActiveImage] = useState<string | null>(null);
+type Trek = {
+  name: string
+  cover_image: string | null
+  gallery: string[] | null
+  duration_days: number
+  difficulty: string
+  max_altitude: number | null
+  group_size: string | null
+  category: string
+}
 
-  const staticImages = [
-    "/images/campingTrek/trekDetail.png",
-    "/images/campingTrek/routeMap.png",
-    "/images/campingTrek/groupImg.png",
-    "/images/campingTrek/trekDetail.png",
-  ];
+const ImageAndOfferSection = ({ trek }: { trek: Trek }) => {
+  const images = [
+    trek.cover_image,
+    ...(trek.gallery || []),
+  ].filter(Boolean) as string[]
+
+  const [activeImage, setActiveImage] = useState<string>(
+    images[0] || '/images/campingTrek/trekDetail.png'
+  )
+
+  // const staticImages = [
+  //   "/images/campingTrek/trekDetail.png",
+  //   "/images/campingTrek/routeMap.png",
+  //   "/images/campingTrek/groupImg.png",
+  //   "/images/campingTrek/trekDetail.png",
+  // ];
 
   const trekDetails = [
     {
-      label: "Duration",
-      labelValue: "19 Days",
-      image: "/images/icons/DurationIcon1.svg",
+      label: 'Duration',
+      labelValue: `${trek.duration_days} Days`,
+      image: '/images/icons/DurationIcon1.svg',
     },
     {
-      label: "Walk",
-      labelValue: "12 Days",
-      image: "/images/icons/WalkIcon.svg",
+      label: 'Difficulty Level',
+      labelValue: trek.difficulty.charAt(0).toUpperCase() + trek.difficulty.slice(1),
+      image: '/images/icons/DifficultyIcon.svg',
     },
-    {
-      label: "Altitude",
-      labelValue: "3200m",
-      image: "/images/icons/MountainIcon1.svg",
-    },
-    {
-      label: "Difficulty Level",
-      labelValue: "Hard",
-      image: "/images/icons/DifficultyIcon.svg",
-    },
-  ];
+    ...(trek.max_altitude
+      ? [{
+        label: 'Altitude',
+        labelValue: `${trek.max_altitude.toLocaleString()}m`,
+        image: '/images/icons/MountainIcon1.svg',
+      }]
+      : []),
+    ...(trek.group_size
+      ? [{
+        label: 'Group Size',
+        labelValue: trek.group_size,
+        image: '/images/icons/WalkIcon.svg',
+      }]
+      : []),
+  ]
+
   return (
     <div className="">
       <div className="flex flex-col sm:flex-row w-full lg:h-[60vh] md:h-[50vh] h-[35vh] sm:gap-0 gap-2 overflow-hidden">
@@ -41,17 +64,18 @@ const ImageAndOfferSection = () => {
           <img
             src={activeImage || "/images/campingTrek/trekDetail.png"}
             alt="Trek Image"
-            className="w-auto h-full sm:object-cover object-contain rounded-r-md transition-all duration-300"
+            className="w-auto h-auto sm:object-cover object-contain rounded-r-md transition-all duration-300"
           />
         </div>
         <div className="sm:w-[22%] w-full sm:h-full h-[30%] flex flex-row sm:flex-col overflow-auto px-4 gap-2 scrollbar-hide">
-          {staticImages.map((image, index) => (
+          {images.map((image, index) => (
             <img
               key={index}
               src={image}
               onClick={() => setActiveImage(image)}
-              alt={`Trek Detail ${index + 1}`}
-              className="w-full h-auto object-cover cursor-pointer rounded-md mb-2"
+              alt={`${trek.name} ${index + 1}`}
+              className={`w-auto h-auto object-contain cursor-pointer rounded-md mb-2 transition-all ${activeImage === image ? 'ring-2 ring-[#2A78A6]' : ''
+                }`}
             />
           ))}
         </div>
@@ -59,12 +83,11 @@ const ImageAndOfferSection = () => {
       <div className="bg-[#DDF8FF66] jakarta flex flex-col lg:flex-row lg:gap-0 gap-6 lg:justify-between items-center justify-center lg:px-24 md:px-14 px-6 py-8">
         <div className="flex flex-col gap-2 jakarta">
           <p className="text-black lg:text-xl font-semibold md:text-lg text-base">
-            Dolpo Fixed Departure Trekking 2025 – Spring Offer
-          </p>
+            {trek.name}          </p>
           <div className="flex flex-row items-center justify-start gap-2">
             <IoLocation className="text-[#2A78A6]" />
             <p className="text-[#636363] lg:text-sm md:text-xs text-[11px]">
-              Dolpo, Saldang 21400, Nepal
+              {trek.category}, Nepal
             </p>
           </div>
         </div>

@@ -13,6 +13,7 @@ import HomeBanner from "./Components/HomeBanner";
 import { NewsAndTrends } from "./Components/NewsAndTrends";
 import HoverpersonCard from "@/components/HoverPersonCard";
 import FAQ from "@/components/FAQ/FAQ";
+import VideoBanner from "./Components/VideoBanner";
 
 const HomePage = () => {
   return (
@@ -20,7 +21,10 @@ const HomePage = () => {
       <Herosection />
       <Aboutus />
       <Features />
-      <Offer />
+
+      <VideoBanner />
+      {/* <Offer /> */}
+
       {/* <HomeBanner /> */}
       {/* <Blankone /> */}
       <OurTeam />

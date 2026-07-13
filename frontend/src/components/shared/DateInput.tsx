@@ -13,6 +13,8 @@ const DateInput = ({
   validationRules,
   className = "",
   iconColor = "#D5E880",
+  onChange,
+  value,
   ...props
 }: {
   register: any;
@@ -24,6 +26,8 @@ const DateInput = ({
   validationRules?: any;
   className?: string;
   iconColor?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
   inputRef?: ((el: HTMLInputElement | null) => void) | React.Ref<HTMLInputElement>;
   [key: string]: unknown;
 }) => {
@@ -38,6 +42,13 @@ const DateInput = ({
     },
   };
 
+  const fieldProps = register(name, rules);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    fieldProps.onChange(event);
+    onChange?.(event);
+  };
+
   return (
     <div className="relative w-full">
       <label htmlFor={name} className="block jakarta text-sm mb-1">
@@ -46,7 +57,7 @@ const DateInput = ({
       </label>
       <div className="relative">
         <input
-          {...register(name, rules)}
+          {...fieldProps}
           ref={(el) => {
             dateInputRef.current = el;
             const ir = props.inputRef as ((el: HTMLInputElement | null) => void) | undefined;
@@ -55,6 +66,8 @@ const DateInput = ({
           type="date"
           id={name}
           placeholder={placeholder}
+          value={value}
+          onChange={handleChange}
           className={`w-full px-4 py-2 lg:text-base md:text-sm text-xs rounded-xl bg-white text-gray-800 focus:outline-none border border-[#c0c0c0] pr-10 appearance-none placeholder:text-gray-400 placeholder:opacity-60 ${className}`}
           {...props}
         />

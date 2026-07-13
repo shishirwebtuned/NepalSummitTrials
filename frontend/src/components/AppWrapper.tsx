@@ -5,7 +5,13 @@ import Navbar from './Navbar'
 import Footer from './Footer/Footer'
 import { usePathname } from 'next/navigation';
 
-const AppWrapper = ({ children }: { children: React.ReactNode }) => {
+type TrekNavItem = {
+    id: string
+    name: string
+    slug: string
+}
+
+const AppWrapper = ({ children, treks = [] }: { children: React.ReactNode; treks: TrekNavItem[] }) => {
 
     const pathname = usePathname();
 
@@ -20,7 +26,7 @@ const AppWrapper = ({ children }: { children: React.ReactNode }) => {
         <div>
             {!hideNavbar && (
                 <div className="sticky top-0 z-50">
-                    <Navbar />
+                    <Navbar treks={treks} />
                 </div>
             )}
             {children}

@@ -1,35 +1,44 @@
-import React from "react";
+import React from 'react'
 
-const images = [
-  { src: "/images/homepage/1.jpg", span: "col-span-2 row-span-1" },
-  { src: "/images/homepage/1.jpg", span: "col-span-1 row-span-1" },
-  { src: "/images/homepage/5.jpg", span: "col-span-1 row-span-1" },
-  { src: "/images/homepage/10.jpg", span: "col-span-1 row-span-2" },
-  { src: "/images/homepage/17.jpg", span: "col-span-1 row-span-1" },
-  { src: "/images/homepage/30.jpg", span: "col-span-1 row-span-1" },
-  { src: "/images/homepage/219.jpg", span: "col-span-1 row-span-1" },
-  { src: "/images/homepage/289.jpg", span: "col-span-2 row-span-1" },
-];
+const spanPatterns = [
+  'col-span-2 row-span-1',
+  'col-span-1 row-span-1',
+  'col-span-1 row-span-1',
+  'col-span-1 row-span-2',
+  'col-span-1 row-span-1',
+  'col-span-1 row-span-1',
+  'col-span-1 row-span-1',
+  'col-span-2 row-span-1',
+]
 
-const GalleryBentoGrid = () => {
+const GalleryBentoGrid = ({ images }: { images: string[] }) => {
+  if (!images || images.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto p-4">
+        <p className="text-sm text-gray-400">No gallery images for this trek.</p>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-7xl mx-auto p-4">
       <div className="flex flex-col flex-wrap sm:grid sm:grid-cols-2 lg:grid-cols-4 auto-rows-[200px] gap-4">
-        {images.map((img, index) => (
+        {images.map((src, index) => (
           <div
             key={index}
-            className={`relative overflow-hidden rounded-xl ${img.span}`}
+            className={`relative overflow-hidden rounded-xl ${spanPatterns[index % spanPatterns.length]
+              }`}
           >
             <img
-              src={img.src}
-              alt={`gallery-${index}`}
+              src={src}
+              alt={`gallery-${index + 1}`}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default GalleryBentoGrid;
+export default GalleryBentoGrid

@@ -9,6 +9,8 @@ import { FcGoogle } from "react-icons/fc";
 import { ArrowRight } from "lucide-react";
 import { MdLockOutline, MdOutlineEmail } from "react-icons/md";
 import { login } from "./actions";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
     const {
@@ -18,12 +20,24 @@ const LoginPage = () => {
         formState: { errors },
     } = useForm();
 
+    const router = useRouter()
+
     const onSubmit = async (data: any) => {
         const formData = new FormData()
         formData.append('email', data.email)
         formData.append('password', data.password)
         const result = await login(formData)
-        if (result?.error) setError('root', { type: 'server', message: result.error })
+
+        if (result?.error) {
+            toast.error(result.error === 'Invalid login credentials'
+                ? 'Incorrect email or password'
+                : result.error)
+            return
+        }
+
+        toast.success('Welcome back!')
+        router.push('/dashboard')
+
     }
 
     return (
@@ -73,7 +87,7 @@ const LoginPage = () => {
                             <Link href="/forgot-password" className="text-xs text-[#0A5482] hover:underline">Forgot password?</Link>
                         </div>
 
-                        <button type="submit" className="w-full bg-[#D5E880] hover:bg-lime-300 transition text-[#2a3d00] font-medium py-2.5 rounded-lg flex items-center justify-center gap-2">
+                        <button type="submit" className="w-full bg-[#D5E880] hover:bg-lime-300 transition text-[#2a3d00] font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer">
                             Sign in <ArrowRight className="w-4 h-4" />
                         </button>
                     </form>
