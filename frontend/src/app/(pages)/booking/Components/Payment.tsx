@@ -44,10 +44,10 @@ const Payment = ({
     }
 
     return (
-        <div className="flex jakarta flex-col-reverse md:flex-row gap-8 w-full sm:px-8 px-5 md:px-16 lg:px-24 md:mt-10 mt-10">
+        <div className="flex jakarta flex-col-reverse md:flex-row-reverse gap-8 w-full sm:px-8 px-5 md:px-16 lg:px-24 md:mt-10 mt-10 items-center">
 
             {/* Left: Payment method selection */}
-            <div className="md:w-2/3 w-full bg-white rounded-md lg:p-6 md:p-5 p-2">
+            <div className="md:w-1/2 w-full bg-white rounded-md lg:p-6 md:p-5 p-2">
                 <h3 className="font-semibold text-[#0B2839] text-base md:text-lg mb-4">
                     Select Payment Method
                 </h3>
@@ -97,11 +97,11 @@ const Payment = ({
             </div>
 
             {/* Right: Summary */}
-            <div className="w-full md:w-1/3 flex flex-col justify-around bg-[#DDEBF5]/70 rounded-2xl p-6 shadow-sm">
+            <div className="w-full md:w-1/3 flex flex-col justify-around bg-[#DDEBF5]/70 rounded-2xl p-4 md:p-6 shadow-sm">
                 <div>
                     <h2 className="lg:text-xl md:text-lg text-base text-[#253058] font-semibold">Payment Summary</h2>
 
-                    <div className="py-5 space-y-3 mt-4 rounded-2xl px-5 bg-[#DFECF6]">
+                    <div className="py-3 md:py-5 space-y-3 mt-4 rounded-2xl px-3 md:px-5 bg-[#DFECF6]">
 
                         {/* Trek & travelers */}
                         <div className="flex justify-between">
@@ -160,9 +160,9 @@ const Payment = ({
                     </div>
                 </div>
 
-                <div className="border-dashed border-t w-full mt-12" />
+                <div className="border-dashed border-t w-full mt-7 md:mt-12" />
 
-                <div className="mt-6 flex flex-row justify-between items-center">
+                <div className="mt-4 md:mt-6 flex flex-row justify-between items-center">
                     <div>
                         <span className="text-[#7C87AA] tracking-wide lg:text-sm md:text-xs text-[10px]">
                             Amount to be Paid Now

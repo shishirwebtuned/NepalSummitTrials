@@ -11,7 +11,7 @@ export default async function TrekMatchPage() {
         .order('created_at', { ascending: true })
 
     return (
-        <div className="pt-[6.5rem] px-2 flex items-center justify-center min-h-screen h-full">
+        <div className="pt-[6.5rem] md:px-0 px-3 flex items-center justify-center min-h-screen h-full">
             <TrekMatchClient treks={treks || []} />
         </div>
     )

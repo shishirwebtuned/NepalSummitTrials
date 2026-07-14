@@ -73,7 +73,7 @@ export default function TrekMatchClient({ treks }: { treks: Trek[] }) {
     }
 
     return (
-        <div className="max-w-3xl w-full mx-auto px-3 sm:px-4 md:px-6 py-6 md:py-10 shadow-[-1px_2px_20px_7px_rgba(190,190,190,0.3)] rounded-3xl">
+        <div className="max-w-3xl w-full mx-auto px-3.5 sm:px-4 md:px-6 py-6 md:py-10 shadow-[-1px_2px_20px_7px_rgba(190,190,190,0.3)] rounded-3xl">
             {screen === 'quiz' && (
                 <Questionnaire onComplete={handleQuizComplete} />
             )}

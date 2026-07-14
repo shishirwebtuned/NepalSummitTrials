@@ -25,7 +25,7 @@ const page = () => {
           ></iframe>
         </div>
       </div>
-      <Branches />
+      {/* <Branches /> */}
     </div>
   );
 };

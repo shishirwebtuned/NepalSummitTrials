@@ -155,7 +155,7 @@ const FormSection = ({ trek, bookingData, onNext }: FormSectionProps) => {
                     </div>
                 </div>
 
-                <h2 className="jakarta my-4 font-semibold text-base sm:text-lg md:text-xl text-[#0B2839]">
+                {/* <h2 className="jakarta my-4 font-semibold text-base sm:text-lg md:text-xl text-[#0B2839]">
                     Add Ons & Options
                 </h2>
                 <div className="flex flex-col gap-4 border-2 p-4 border-[#ebebeb] rounded-xl">
@@ -173,7 +173,7 @@ const FormSection = ({ trek, bookingData, onNext }: FormSectionProps) => {
                             </div>
                         </div>
                     ))}
-                </div>
+                </div> */}
 
                 <BookingButtons
                     onNextClick={handleSubmit(onSubmit)}

@@ -111,32 +111,32 @@ export default function Questionnaire({ onComplete }: { onComplete: (a: Answers)
     return (
         <div className="jakarta">
             {/* Progress */}
-            <div className="h-1 bg-slate-100 rounded-full mb-6 overflow-hidden">
+            <div className="h-1 bg-slate-100 rounded-full mb-4 md:mb-6 overflow-hidden">
                 <div
                     className="h-full bg-[#0A5482] rounded-full transition-all duration-500"
                     style={{ width: `${progress}%` }}
                 />
             </div>
 
-            <p className="text-xs text-slate-400 font-medium mb-1 tracking-wider uppercase">
+            <p className="text-[10px] md:text-xs text-slate-400 font-medium mb-1 tracking-wider uppercase">
                 Step {current + 1} of {questions.length}
             </p>
-            <h2 className="gloock text-2xl text-[#0d1f2d] mb-1">{q.title}</h2>
-            <p className="text-sm text-slate-500 mb-6">{q.sub}</p>
+            <h2 className="gloock text-xl md:text-2xl text-[#0d1f2d] mb-1">{q.title}</h2>
+            <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">{q.sub}</p>
 
             {/* Options */}
-            <div className="grid grid-cols-2 gap-3 mb-8">
+            <div className="grid grid-cols-2 gap-3 mb-6 md:mb-8">
                 {q.opts.map((opt) => (
                     <button
                         key={opt.value}
                         onClick={() => handleSelect(opt.value)}
-                        className={`flex items-center gap-3 p-4 rounded-2xl border text-left cursor-pointer transition-all ${selected === opt.value
+                        className={`flex items-center gap-3 p-2.5 md:p-4 rounded-2xl border text-left cursor-pointer transition-all ${selected === opt.value
                             ? 'border-[#0A5482] bg-blue-50 border-[1.5px]'
                             : 'border-slate-200 bg-white hover:border-[#0A5482]/40'
                             }`}
                     >
                         <div
-                            className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-sm font-bold transition-colors ${selected === opt.value
+                            className={`md:w-9 md:h-9 w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs md:text-sm font-bold transition-colors ${selected === opt.value
                                 ? 'bg-[#0A5482] text-[#D5E880]'
                                 : 'bg-slate-100 text-slate-500'
                                 }`}
@@ -144,17 +144,17 @@ export default function Questionnaire({ onComplete }: { onComplete: (a: Answers)
                             {opt.label.charAt(0)}
                         </div>
                         <div>
-                            <p className={`text-sm font-semibold ${selected === opt.value ? 'text-[#0A5482]' : 'text-slate-800'}`}>
+                            <p className={`text-xs md:text-sm font-semibold ${selected === opt.value ? 'text-[#0A5482]' : 'text-slate-800'}`}>
                                 {opt.label}
                             </p>
-                            <p className="text-xs text-slate-400 mt-0.5">{opt.sub}</p>
+                            <p className="text-[10px] md:text-xs text-slate-400 mt-0.5">{opt.sub}</p>
                         </div>
                     </button>
                 ))}
             </div>
 
             {/* Dots */}
-            <div className="flex justify-center gap-1.5 mb-6">
+            <div className="flex justify-center gap-1.5 mb-4 md:mb-6">
                 {questions.map((_, i) => (
                     <div
                         key={i}
@@ -169,14 +169,14 @@ export default function Questionnaire({ onComplete }: { onComplete: (a: Answers)
                 <button
                     onClick={handleBack}
                     disabled={current === 0}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-500 hover:bg-slate-50 transition disabled:opacity-30 cursor-pointer"
+                    className="flex items-center gap-2 px-3 md:px-4 py-2.5 rounded-xl border border-slate-200 text-xs md:text-sm font-semibold text-slate-500 hover:bg-slate-50 transition disabled:opacity-30 cursor-pointer"
                 >
                     <TbArrowLeft className="text-base" /> Back
                 </button>
                 <button
                     onClick={handleNext}
                     disabled={!selected}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0A5482] hover:bg-[#083d61] text-white text-sm font-semibold transition disabled:opacity-60 cursor-pointer"
+                    className="flex items-center gap-2 px-3 md:px-4 py-2.5 rounded-xl bg-[#0A5482] hover:bg-[#083d61] text-white text-xs md:text-sm font-semibold transition disabled:opacity-60 cursor-pointer"
                 >
                     {current === questions.length - 1 ? 'Find my trek' : 'Next'}
                     <TbArrowRight className="text-base" />
