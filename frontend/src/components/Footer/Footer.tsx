@@ -10,62 +10,65 @@ import { BiSolidPhoneCall } from "react-icons/bi";
 
 import { IoIosMail } from "react-icons/io";
 import ContactCard from "./components/ContactCard";
+import { TrekNavItem } from "../Navbar";
 
-const footerLinks = {
-  linkGroupOne: [
-    { href: "/", title: "Tour Listings" },
-    { href: "/", title: "Destinations" },
-    { href: "/", title: "Activities" },
-    { href: "/", title: "How it Works" },
-    { href: "/", title: "How it works" },
-  ],
-  linkGroupTwo: [
-    { href: "/aboutus", title: "About" },
-    { href: "/", title: "Our Team" },
-    { href: "/", title: "Testimonials" },
-    { href: "/", title: "Latest News" },
-    { href: "/contactus", title: "Contact Now" },
-  ],
 
-  mainLinks: [
-    {
-      href: "/",
-      icon: FaFacebookF,
-    },
-    {
-      href: "/",
-      icon: RiInstagramFill,
-    },
-    {
-      href: "/",
-      icon: FaTiktok,
-    },
-    {
-      href: "/",
-      icon: FaYoutube,
-    },
-    {
-      href: "/",
-      icon: RiLinkedinFill,
-    },
-  ],
-  contactGroup: [
-    {
-      title: "Budanilkantha Kathmandu, Nepal",
-      icon: IoLocation,
-    },
-    {
-      title: "(+977) 987654321",
-      icon: BiSolidPhoneCall,
-    },
-    {
-      title: "info@event.com",
-      icon: IoIosMail,
-    },
-  ],
-};
 
-const Footer = () => {
+const Footer = ({ treks }: { treks: TrekNavItem[] }) => {
+
+  const footerLinks = {
+    linkGroupOne: treks.length > 0 ?
+      treks.map((trek) => ({
+        href: `/trek-detail/${trek.slug}`,
+        title: trek.name,
+      })) : [{
+        href: "/", title: "No Treks Available",
+      }],
+    linkGroupTwo: [
+      { href: "/aboutus", title: "About" },
+      { href: "/blog", title: "Blog" },
+      { href: "/trek-match", title: "Trek Match" },
+      { href: "/contactus", title: "Contact Us" },
+    ],
+
+    mainLinks: [
+      {
+        href: "/",
+        icon: FaFacebookF,
+      },
+      {
+        href: "/",
+        icon: RiInstagramFill,
+      },
+      {
+        href: "/",
+        icon: FaTiktok,
+      },
+      {
+        href: "/",
+        icon: FaYoutube,
+      },
+      {
+        href: "/",
+        icon: RiLinkedinFill,
+      },
+    ],
+    contactGroup: [
+      {
+        title: "Budanilkantha Kathmandu, Nepal",
+        icon: IoLocation,
+      },
+      {
+        title: "(+977) 987654321",
+        icon: BiSolidPhoneCall,
+      },
+      {
+        title: "info@event.com",
+        icon: IoIosMail,
+      },
+    ],
+  };
+
   return (
     <>
       <div className="flex w-full flex-col justify-center">
@@ -97,7 +100,7 @@ const Footer = () => {
         </div>
         <div className="bg-[#0B2839] relative">
           <div className="absolute bottom-0 h-full inset-x-0 w-full flex justify-center items-end z-0">
-            <h1 className="font-bold protest text-[#2945564D]  text-[3rem] md:text-[8rem] lg:text-[12rem] overflow-hidden whitespace-nowrap ">
+            <h1 className="font-bold protest text-[#2945564D]  text-[3rem] md:text-[8rem] lg:text-[12rem] overflow-hidden whitespace-nowrap hidden md:flex">
               Adventure Awaits
             </h1>
           </div>
@@ -105,12 +108,12 @@ const Footer = () => {
           <div className="relative flex justify-between flex-wrap gap-x-2 gap-y-4 pt-8 px-[9%] z-10 lg:pb-0 pb-8">
             <div className="">
               <h1 className="font-semibold text-white text-base md:text-lg lg:text-xl pb-2">
-                Company
+                Treks
               </h1>
               <div className="flex flex-col">
                 {footerLinks.linkGroupOne.map((item, index) => (
                   <Link
-                    className="text-[#8FB2C6] pb-2 lg:text-base md:text-sm text-xs"
+                    className="text-[#8FB2C6] pb-1 md:pb-2 lg:text-base md:text-sm text-xs"
                     key={index}
                     href={item.href}
                   >
@@ -126,7 +129,7 @@ const Footer = () => {
               <div className="flex flex-col">
                 {footerLinks.linkGroupTwo.map((item, index) => (
                   <Link
-                    className="text-[#8FB2C6] pb-2 lg:text-base md:text-sm text-xs"
+                    className="text-[#8FB2C6] pb-1 md:pb-2 lg:text-base md:text-sm text-xs"
                     key={index}
                     href={item.href}
                   >
@@ -142,7 +145,7 @@ const Footer = () => {
               </h1>
               {footerLinks.contactGroup.map((item, index) => (
                 <div
-                  className="flex items-center gap-4 pb-2 lg:text-base md:text-sm text-xs"
+                  className="flex items-center gap-4 pb-1 md:pb-2 lg:text-base md:text-sm text-xs"
                   key={index}
                 >
                   <item.icon className="lg:size-5 md:size-4 size-3 fill-[#D5E880]" />

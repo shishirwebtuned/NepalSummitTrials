@@ -30,7 +30,7 @@ const AppWrapper = ({ children, treks = [] }: { children: React.ReactNode; treks
                 </div>
             )}
             {children}
-            {!hideFooter && <Footer />}
+            {!hideFooter && <Footer treks={treks} />}
         </div>
     )
 }

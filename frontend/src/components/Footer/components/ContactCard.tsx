@@ -38,11 +38,11 @@ const ContactCard = () => {
   };
 
   return (
-    <div className="px-[1rem] bg-[#041B29] rounded-xl py-8">
+    <div className="px-[1rem] bg-[#041B29] rounded-xl py-4 md:py-8">
       <h1 className="text-white text-sm md:text-base lg:text-lg font-semibold ">
         Signup for our latest news and articles
       </h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-2 md:mt-4">
         <div className="relative rounded-xl">
           <input
             {...register("Email", {

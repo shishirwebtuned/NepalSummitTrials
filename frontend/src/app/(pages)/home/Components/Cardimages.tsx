@@ -39,7 +39,7 @@ const Cardimages = () => {
   ];
 
   return (
-    <div className="w-full py-16 px-4 bg-white relative bg-no-repeat md:bg-top md:bg-contain md:bg-[url('/images/PlanePathImg.svg')]">
+    <div className="w-full py-10 md:py-16 px-4 bg-white relative bg-no-repeat md:bg-top md:bg-contain md:bg-[url('/images/PlanePathImg.svg')]">
       {/* Container for the entire timeline */}
       <div className="max-w-7xl mx-auto relative">
         {/* Dotted path connecting the images */}
@@ -77,13 +77,13 @@ const Cardimages = () => {
           {journeyData.map((item) => (
             <div
               key={item.id}
-              className="w-full sm:w-1/2 md:w-1/4 px-2 mb-12 flex flex-col items-center"
+              className="w-full sm:w-1/2 md:w-1/4 px-2 mb-6 md:mb-12 flex flex-col items-center"
             >
               {/* Polaroid image */}
               <div
-                className={`md:mb-16 mb-8 transform ${item.imageRotation} hover:rotate-0 transition-transform duration-300`}
+                className={`md:mb-16 mb-4 transform ${item.imageRotation} hover:rotate-0 transition-transform duration-300`}
               >
-                <div className="bg-[#CDE2F0] lg:w-[180px] lg:h-[200px] md:w-[120px] md:h-[140px] w-[100px] h-[120px] px-3 pt-3 pb-5 shadow-md inline-block">
+                <div className="bg-[#CDE2F0] lg:w-[180px] lg:h-[200px] md:w-[120px] md:h-[140px] w-[100px] h-[100px] px-3 pt-3 pb-5 shadow-md inline-block">
                   <div className="relative w-full h-full">
                     <Image
                       src={item.image}
@@ -110,11 +110,11 @@ const Cardimages = () => {
                     alt="Homepage.jpg"
                     className="-z-10 absolute top-0 left-0"
                   /> */}
-                  <div className="px-13 py-8 flex flex-col justify-center items-center">
-                    <div className="font-bold lg:text-[28px] md:text-xl text-lg jakarta">
+                  <div className="px-10 md:px-13 py-6 md:py-8 flex flex-col justify-center items-center">
+                    <div className="font-bold lg:text-[28px] md:text-xl text-[16px] jakarta">
                       {item.stat}
                     </div>
-                    <div className="lg:text-[15px] md:text-sm text-xs jakarta text-center uppercase font-medium mt-1">
+                    <div className="lg:text-[15px] md:text-sm text-[10px] jakarta text-center uppercase font-medium mt-1">
                       {item.description}
                     </div>
                   </div>

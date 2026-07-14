@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { FaFacebook, FaInstagram, FaTiktok } from "react-icons/fa";
 
-type TrekNavItem = {
+export type TrekNavItem = {
   id: string
   name: string
   slug: string
@@ -110,9 +110,9 @@ const Navbar = ({ treks }: { treks: TrekNavItem[] }) => {
       >
         <div
           className={`${isScrolled || isMenuOpen ? "bg-[#0A5482]" : "bg-transparent"
-            }container mx-auto flex flex-col sm:flex-row justify-between sm:items-center items-start sm:gap-0 gap-1`}
+            }container mx-auto flex flex-row justify-between sm:items-center items-center sm:gap-0 gap-1`}
         >
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+          <div className="flex sm:flex-row flex-col items-start sm:items-center gap-x-6 gap-y-1">
             <div className="flex items-center gap-2">
               <Mail className="lg:h-4 lg:w-4 md:h-3 md:w-3 h-3 w-3" />
               <span className="lg:text-sm md:text-xs text-[10px]">

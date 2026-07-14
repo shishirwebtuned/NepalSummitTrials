@@ -8,42 +8,42 @@ const Offerg = () => {
       expenses: "Starts from $120",
       days: "14 Days",
       image: "/images/Rectangle 22021(5).png",
-      colSpan: "col-span-2", // Large card
+      colSpan: "sm:col-span-2", // Large card
     },
     {
       placename: "Everest Base Camp",
       expenses: "Starts from $180",
       days: "14 Days",
       image: "/images/Rectangle 22021(1).png",
-      colSpan: "col-span-1",
+      colSpan: "sm:col-span-1",
     },
     {
       placename: "Everest Base Camp",
       expenses: "Starts from $150",
       days: "10 Days",
       image: "/images/Rectangle 22021(2).png",
-      colSpan: "col-span-1",
+      colSpan: "sm:col-span-1",
     },
     {
       placename: "Everest Base Camp",
       expenses: "Starts from $120",
       days: "14 Days",
       image: "/images/Rectangle 22021(3).png",
-      colSpan: "col-span-1",
+      colSpan: "sm:col-span-1",
     },
     {
       placename: "Makkinath",
       expenses: "Starts from $140",
       days: "5 Days",
       image: "/images/Rectangle 22021(4).png",
-      colSpan: "col-span-1",
+      colSpan: "sm:col-span-1",
     },
     {
       placename: "Annapurna Base Camp",
       expenses: "Starts from $100",
       days: "8 Days",
       image: "/images/Rectangle 22021.png",
-      colSpan: "col-span-2", // Wide card
+      colSpan: "sm:col-span-2", // Wide card
     },
   ];
 
