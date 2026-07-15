@@ -244,6 +244,8 @@ export default function TreksTable({ treks }: { treks: Trek[] }) {
             {deleteTarget && (
                 <DeleteModal
                     title={deleteTarget.title}
+                    modalTitle="trek"
+                    type='trek'
                     onConfirm={handleDelete}
                     onCancel={() => setDeleteTarget(null)}
                 />

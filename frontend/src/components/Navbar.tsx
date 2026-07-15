@@ -266,6 +266,17 @@ const Navbar = ({ treks }: { treks: TrekNavItem[] }) => {
               <Search className="h-5 w-5" />
             </button> */}
           </div>
+          <div className="hidden lg:flex items-center gap-2 ml-3">
+            <Link
+              href="/login"
+              className="bg-[#D5E880] hover:bg-yellow-400 text-gray-800 px-4 py-[10px] rounded-md font-medium transition-colors text-sm lg:text-sm xl:text-base"
+            >
+              Login
+            </Link>
+            {/* <button className="bg-[#D5E880] hover:bg-yellow-400 text-gray-800 p-3 rounded-md transition-colors">
+              <Search className="h-5 w-5" />
+            </button> */}
+          </div>
         </div>
       </div>
 

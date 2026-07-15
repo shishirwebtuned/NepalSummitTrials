@@ -13,7 +13,7 @@ const page = () => {
       <GetInTouch />
       {/* <Emergency /> */}
 
-      <div className="w-full">
+      <div className="w-full mt-4">
         <div className="w-full ">
 
 

@@ -5,14 +5,16 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
-import { MdDashboard, MdArticle, MdTerrain, MdPeople, MdLogout } from 'react-icons/md'
+import { MdDashboard, MdArticle, MdTerrain, MdPeople, MdLogout, MdCalendarMonth } from 'react-icons/md'
 import LogoutModal from './LogoutModal'
 
 const links = [
     { href: '/dashboard', label: 'Overview', icon: MdDashboard },
     { href: '/dashboard/blogs', label: 'Blogs', icon: MdArticle },
     { href: '/dashboard/treks', label: 'Treks', icon: MdTerrain },
-    // { href: '/dashboard/guides', label: 'Guides', icon: MdPeople },
+    { href: '/dashboard/bookings', label: 'Bookings', icon: MdCalendarMonth },
+    { href: '/dashboard/contacts', label: 'Contacts', icon: MdPeople },
+
 ]
 
 export default function Sidebar() {

@@ -43,17 +43,17 @@ const ContactCard = () => {
       <div>
         {cardDetails.map((item, index) => (
           <div key={index}>
-            <div className="flex gap-3  mx-3 lg:mx-[3rem] ">
-              <div className="bg-[#2b4657] flex items-center   justify-center rounded-xl h-10 w-10 lg:h-13 lg:w-13">
+            <div className="flex gap-3 mx-3 lg:mx-[3rem] ">
+              <div className="bg-[#2b4657] flex items-center justify-center rounded-xl h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12">
                 <item.icon
-                  className=" size-6 lg:size-10 "
+                  className="size-5 md:size-6 lg:size-8"
                   style={{ color: "#D5E880" }}
                 />
               </div>
 
               <div>
-                <h2 className="jakarta text-sm text-[#E4E4E4]">{item.title}</h2>
-                <p className="jakarta text-white text-sm lg:text-lg">
+                <h2 className="jakarta text-xs md:text-[14px] text-[#E4E4E4]">{item.title}</h2>
+                <p className="jakarta text-white text-sm md:text-[17px]">
                   {item.description}
                 </p>
               </div>

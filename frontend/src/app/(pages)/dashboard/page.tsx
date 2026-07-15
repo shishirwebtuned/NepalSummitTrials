@@ -1,53 +1,143 @@
 // app/(pages)/dashboard/page.tsx
 import Link from 'next/link'
-import { TbCalendarCheck, TbCash, TbMountain, TbUsers, TbBell, TbSettings, TbTrendingUp, TbClock, TbCheck, TbArrowRight, TbPlus, TbArticle, TbUserPlus, TbMail, TbCalendarPlus, TbX } from 'react-icons/tb'
-import BookingDonut from './Components/BookingDonut'
+import { createClient } from '@/lib/supabase/server'
+import {
+    TbCalendarCheck, TbCash, TbMountain, TbUsers, TbBell, TbSettings,
+    TbTrendingUp, TbClock, TbArrowRight, TbPlus, TbArticle, TbUserPlus,
+    TbMail, TbCalendarPlus, TbX
+} from 'react-icons/tb'
 import RevenueChart from './Components/RevenueChart'
+import BookingDonut from './Components/BookingDonut'
 
-const stats = [
-    { label: 'Total bookings', value: '284', delta: '+12% from last month', up: true, icon: TbCalendarCheck, accent: '#0A5482', bg: 'bg-blue-50', ic: 'text-blue-900', badge: 'Bookings' },
-    { label: 'Total this year', value: '$48.2K', delta: '+8% from last month', up: true, icon: TbCash, accent: '#D5E880', bg: 'bg-lime-50', ic: 'text-lime-900', badge: 'Revenue' },
-    { label: 'Active packages', value: '18', delta: '3 starting this week', up: null, icon: TbMountain, accent: '#f59e0b', bg: 'bg-amber-50', ic: 'text-amber-800', badge: 'Treks' },
-    { label: 'Total team members', value: '12', delta: '9 available now', up: true, icon: TbUsers, accent: '#8b5cf6', bg: 'bg-violet-50', ic: 'text-violet-800', badge: 'Guides' },
-]
-
-const bookings = [
-    { name: 'Rajan Sharma', initials: 'RS', trek: 'Everest Base Camp · 14 days', status: 'Paid', ib: 'bg-blue-50 text-blue-900' },
-    { name: 'Sarah Mitchell', initials: 'SM', trek: 'Annapurna Circuit · 21 days', status: 'Pending', ib: 'bg-amber-50 text-amber-800' },
-    { name: 'Tom Eriksson', initials: 'TE', trek: 'Langtang Valley · 10 days', status: 'Paid', ib: 'bg-green-50 text-green-900' },
-    { name: 'Priya Mehta', initials: 'PM', trek: 'Manaslu Circuit · 16 days', status: 'Cancelled', ib: 'bg-red-50 text-red-800' },
-    { name: 'James Okafor', initials: 'JO', trek: 'Gokyo Lakes · 12 days', status: 'Pending', ib: 'bg-violet-50 text-violet-800' },
-]
-
-const treks = [
-    { name: 'Everest Base Camp', pct: 85 },
-    { name: 'Annapurna Circuit', pct: 68 },
-    { name: 'Langtang Valley', pct: 42 },
-    { name: 'Manaslu Circuit', pct: 30 },
-]
+const badgeStyle: Record<string, string> = {
+    pending: 'bg-amber-50 text-amber-800',
+    paid: 'bg-green-50 text-green-900',
+    cancelled: 'bg-red-50 text-red-800',
+    refunded: 'bg-slate-100 text-slate-600',
+}
 
 const quickActions = [
     { label: 'New trek', icon: TbPlus, href: '/dashboard/treks/new', bg: 'bg-blue-50', ic: 'text-blue-900' },
     { label: 'New blog', icon: TbArticle, href: '/dashboard/blogs/new', bg: 'bg-green-50', ic: 'text-green-900' },
-    { label: 'Add guide', icon: TbUserPlus, href: '/dashboard/guides/new', bg: 'bg-amber-50', ic: 'text-amber-800' },
-    { label: 'Send email', icon: TbMail, href: '/dashboard/email', bg: 'bg-violet-50', ic: 'text-violet-800' },
+    { label: 'Bookings', icon: TbCalendarCheck, href: '/dashboard/bookings', bg: 'bg-amber-50', ic: 'text-amber-800' },
+    { label: 'Messages', icon: TbMail, href: '/dashboard/contacts', bg: 'bg-violet-50', ic: 'text-violet-800' },
 ]
 
-const activity = [
-    { text: 'New booking — Rajan Sharma · EBC', time: '2 minutes ago', bg: 'bg-blue-50', ic: 'text-blue-900', icon: TbCalendarPlus },
-    { text: 'Blog published — "Top 5 treks in Nepal"', time: '1 hour ago', bg: 'bg-green-50', ic: 'text-green-900', icon: TbArticle },
-    { text: 'Booking cancelled — Priya Mehta', time: '3 hours ago', bg: 'bg-red-50', ic: 'text-red-800', icon: TbX },
-    { text: 'New guide added — Dawa Sherpa', time: 'Yesterday', bg: 'bg-violet-50', ic: 'text-violet-800', icon: TbUserPlus },
-    { text: 'Payment received — $7,500 · Tom Eriksson', time: 'Yesterday', bg: 'bg-amber-50', ic: 'text-amber-800', icon: TbCash },
-]
+export default async function DashboardPage() {
+    const supabase = await createClient()
 
-const badgeStyle: Record<string, string> = {
-    Paid: 'bg-green-50 text-green-900',
-    Pending: 'bg-amber-50 text-amber-800',
-    Cancelled: 'bg-red-50 text-red-800',
-}
+    // Fetch all data in parallel
+    const [
+        { data: bookings },
+        { data: treks },
+        { data: blogs },
+        { data: contacts },
+        { data: recentBookings },
+    ] = await Promise.all([
+        supabase.from('bookings').select('id, payment_status, total_with_vat, created_at'),
+        supabase.from('treks').select('id, name, status'),
+        supabase.from('blogs').select('id, status'),
+        supabase.from('contact_messages').select('id, full_name, status, created_at'),
+        supabase
+            .from('bookings')
+            .select('id, lead_first_name, lead_last_name, payment_status, total_with_vat, created_at, treks(name, duration_days)')
+            .order('created_at', { ascending: false })
+            .limit(5),
+    ])
 
-export default function DashboardPage() {
+    // Add to the Promise.all in dashboard/page.tsx
+    const { data: allBookingsForRevenue } = await supabase
+        .from('bookings')
+        .select('total_with_vat, created_at')
+        .eq('payment_status', 'paid')  // only count paid bookings as revenue
+        .gte('created_at', `${new Date().getFullYear()}-01-01`)  // current year only
+        .lte('created_at', `${new Date().getFullYear()}-12-31`)
+
+    // Stats calculations
+    const totalBookings = bookings?.length ?? 0
+    const totalRevenue = bookings?.reduce((sum, b) => sum + (b.total_with_vat ?? 0), 0) ?? 0
+    const activetreks = treks?.filter((t) => t.status === 'active').length ?? 0
+    const unreadMessages = contacts?.filter((c) => c.status === 'unread').length ?? 0
+
+    // Booking status breakdown for donut
+    const paid = bookings?.filter((b) => b.payment_status === 'paid').length ?? 0
+    const pending = bookings?.filter((b) => b.payment_status === 'pending').length ?? 0
+    const cancelled = bookings?.filter((b) => b.payment_status === 'cancelled').length ?? 0
+
+    // Popular treks — count bookings per trek name
+    const trekBookingCount: Record<string, number> = {}
+    recentBookings?.forEach((b: any) => {
+        const name = b.treks?.name
+        if (name) trekBookingCount[name] = (trekBookingCount[name] ?? 0) + 1
+    })
+
+    // All-time trek popularity from all bookings
+    const { data: allBookings } = await supabase
+        .from('bookings')
+        .select('treks(name)')
+
+    const allTrekCount: Record<string, number> = {}
+    allBookings?.forEach((b: any) => {
+        const name = b.treks?.name
+        if (name) allTrekCount[name] = (allTrekCount[name] ?? 0) + 1
+    })
+
+    const maxCount = Math.max(...Object.values(allTrekCount), 1)
+    const popularTreks = Object.entries(allTrekCount)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 4)
+        .map(([name, count]) => ({ name, pct: Math.round((count / maxCount) * 100) }))
+
+    const stats = [
+        {
+            label: 'Total bookings', value: totalBookings.toString(),
+            delta: `${paid} paid · ${pending} pending`,
+            up: true, icon: TbCalendarCheck,
+            accent: '#0A5482', bg: 'bg-blue-50', ic: 'text-blue-900', badge: 'Bookings',
+        },
+        {
+            label: 'Total revenue', value: `$${(totalRevenue / 1000).toFixed(1)}K`,
+            delta: `From ${totalBookings} bookings`,
+            up: true, icon: TbCash,
+            accent: '#D5E880', bg: 'bg-lime-50', ic: 'text-lime-900', badge: 'Revenue',
+        },
+        {
+            label: 'Active packages', value: activetreks.toString(),
+            delta: `${treks?.length ?? 0} total treks`,
+            up: null, icon: TbMountain,
+            accent: '#f59e0b', bg: 'bg-amber-50', ic: 'text-amber-800', badge: 'Treks',
+        },
+        {
+            label: 'Unread messages', value: unreadMessages.toString(),
+            delta: `${contacts?.length ?? 0} total messages`,
+            up: unreadMessages > 0, icon: TbMail,
+            accent: '#8b5cf6', bg: 'bg-violet-50', ic: 'text-violet-800', badge: 'Messages',
+        },
+    ]
+
+    const formatDate = (date: string) =>
+        new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+
+    const getInitials = (firstName: string, lastName: string) =>
+        `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase()
+
+    const initialsColors = [
+        'bg-blue-50 text-blue-900',
+        'bg-amber-50 text-amber-800',
+        'bg-green-50 text-green-900',
+        'bg-red-50 text-red-800',
+        'bg-violet-50 text-violet-800',
+    ]
+
+    // Build 12-month array (index 0 = Jan, index 11 = Dec)
+    const monthlyRevenue = Array(12).fill(0)
+    allBookingsForRevenue?.forEach((b) => {
+        const month = new Date(b.created_at).getMonth() // 0-indexed
+        monthlyRevenue[month] += b.total_with_vat ?? 0
+    })
+    // Round each month to nearest dollar
+    const monthlyData = monthlyRevenue.map((v) => Math.round(v))
+
     return (
         <div className="space-y-5 jakarta">
 
@@ -56,20 +146,21 @@ export default function DashboardPage() {
                 <div>
                     <p className="text-[11px] md:text-[12px] tracking-widest text-[#0A5482] uppercase font-semibold mb-1">Admin panel</p>
                     <h1 className="gloock text-xl md:text-2xl text-[#0d1f2d]">Good morning, Admin ✦</h1>
-                    {/* <p className="text-sm text-slate-400 mt-1">Nepal Summit Trials · Dashboard overview</p> */}
                 </div>
                 <div className="flex items-center gap-2.5">
                     <div className="flex items-center font-semibold gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs md:text-sm text-slate-500">
-                        <TbCalendarCheck className="text-xs md:text-base" /> {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        <TbCalendarCheck className="text-xs md:text-base" />
+                        {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </div>
-                    <button className="relative w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-slate-50">
+                    <Link href="/dashboard/contacts" className="relative w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-slate-50">
                         <TbBell className="text-base md:text-lg" />
-                        <span className="absolute top-1 right-1.5 w-2 h-2 md:w-3 md:h-3 bg-red-500 rounded-full border-2 border-white" />
-                    </button>
+                        {unreadMessages > 0 && (
+                            <span className="absolute top-1 right-1.5 w-2 h-2 md:w-2.5 md:h-2.5 bg-red-500 rounded-full border-2 border-white" />
+                        )}
+                    </Link>
                     <button className="w-9 h-9 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:bg-slate-50">
                         <TbSettings className="text-base md:text-lg" />
                     </button>
-
                 </div>
             </div>
 
@@ -98,7 +189,8 @@ export default function DashboardPage() {
 
             {/* Middle */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                {/* Bookings — wider */}
+
+                {/* Recent bookings */}
                 <div className="lg:col-span-3 bg-white rounded-2xl border border-slate-100 p-5">
                     <div className="flex items-center justify-between mb-4">
                         <div>
@@ -109,37 +201,53 @@ export default function DashboardPage() {
                             View all <TbArrowRight className="text-xs md:text-sm" />
                         </Link>
                     </div>
-                    {bookings.map((b) => (
-                        <div key={b.name} className="flex items-center justify-between py-2.5 border-b border-slate-50 last:border-0">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-lg ${b.ib} flex items-center justify-center text-[11px] font-bold flex-shrink-0`}>
-                                    {b.initials}
+
+                    {recentBookings && recentBookings.length > 0 ? (
+                        recentBookings.map((b: any, i: number) => (
+                            <div key={b.id} className="flex items-center justify-between py-2.5 border-b border-slate-50 last:border-0">
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-8 h-8 rounded-lg ${initialsColors[i % initialsColors.length]} flex items-center justify-center text-[11px] font-bold flex-shrink-0`}>
+                                        {getInitials(b.lead_first_name, b.lead_last_name)}
+                                    </div>
+                                    <div>
+                                        <p className="text-[13px] md:text-[14px] font-semibold text-slate-800">
+                                            {b.lead_first_name} {b.lead_last_name}
+                                        </p>
+                                        <p className="text-[11px] md:text-[12px] text-slate-400">
+                                            {(b.treks as any)?.name ?? 'Unknown trek'} · {(b.treks as any)?.duration_days ?? '?'} days
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-[13px] md:text-[14px] font-semibold text-slate-800">{b.name}</p>
-                                    <p className="text-[11px] md:text-[12px] text-slate-400">{b.trek}</p>
-                                </div>
+                                <span className={`text-[10px] md:text-[11px] font-semibold px-2.5 py-1 rounded-full capitalize ${badgeStyle[b.payment_status]}`}>
+                                    {b.payment_status}
+                                </span>
                             </div>
-                            <span className={`text-[10px] md:text-[11px] font-semibold px-2.5 py-1 rounded-full ${badgeStyle[b.status]}`}>{b.status}</span>
-                        </div>
-                    ))}
+                        ))
+                    ) : (
+                        <p className="text-sm text-slate-400 text-center py-8">No bookings yet.</p>
+                    )}
                 </div>
 
                 {/* Right col */}
                 <div className="lg:col-span-2 flex flex-col gap-4">
+
                     {/* Popular treks */}
                     <div className="bg-white rounded-2xl border border-slate-100 p-5">
                         <h2 className="jakarta text-sm md:text-base font-semibold text-[#0d1f2d] mb-1">Popular treks</h2>
                         <p className="text-[11px] md:text-[12px] font-semibold text-slate-500 mb-4">By booking volume</p>
-                        {treks.map(({ name, pct }) => (
-                            <div key={name} className="flex items-center gap-3 mb-3 last:mb-0">
-                                <span className="text-xs md:text-[13px] text-slate-400 font-medium w-24 shrink-0 truncate">{name}</span>
-                                <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                    <div className="h-full rounded-full bg-[#0A5482]" style={{ width: `${pct}%`, opacity: pct > 60 ? 1 : pct > 40 ? 0.7 : 0.45 }} />
+                        {popularTreks.length > 0 ? (
+                            popularTreks.map(({ name, pct }) => (
+                                <div key={name} className="flex items-center gap-3 mb-3 last:mb-0">
+                                    <span className="text-xs md:text-[13px] text-slate-400 font-medium w-24 shrink-0 truncate">{name}</span>
+                                    <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                        <div className="h-full rounded-full bg-[#0A5482]" style={{ width: `${pct}%`, opacity: pct > 60 ? 1 : pct > 40 ? 0.7 : 0.45 }} />
+                                    </div>
+                                    <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 w-7 text-right">{pct}%</span>
                                 </div>
-                                <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 w-7 text-right">{pct}%</span>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p className="text-sm text-slate-400">No booking data yet.</p>
+                        )}
                     </div>
 
                     {/* Quick actions */}
@@ -159,57 +267,71 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Bottom */}
-            {/* Bottom — replace existing */}
+            {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-                {/* Revenue */}
                 <div className="bg-white rounded-2xl border border-slate-100 p-5">
                     <div className="flex items-center justify-between mb-2">
                         <div>
                             <h2 className="jakarta text-sm md:text-base font-semibold text-[#0d1f2d]">Revenue this year</h2>
                             <p className="text-[11px] md:text-[12px] font-semibold text-slate-500 mt-0.5">Monthly breakdown</p>
                         </div>
-                        <span className="text-xs md:text-[13px] font-semibold text-emerald-700 bg-green-50 px-2.5 py-0.5 rounded-full">↑ 8%</span>
+                        <span className="text-xs md:text-[13px] font-semibold text-emerald-700 bg-green-50 px-2.5 py-0.5 rounded-full">
+                            ${totalRevenue.toLocaleString()} total
+                        </span>
                     </div>
-                    <RevenueChart />
+                    <RevenueChart monthlyData={monthlyData} />
                 </div>
 
-                {/* Booking status donut */}
                 <div className="bg-white rounded-2xl border border-slate-100 p-5">
                     <div className="flex items-center justify-between mb-2">
                         <div>
                             <h2 className="jakarta text-sm md:text-base font-semibold text-[#0d1f2d]">Booking status</h2>
-                            <p className="text-[11px] md:text-[12px] font-semibold text-slate-500 mt-0.5">284 total bookings</p>
+                            <p className="text-[11px] md:text-[12px] font-semibold text-slate-500 mt-0.5">{totalBookings} total bookings</p>
                         </div>
                     </div>
-                    <BookingDonut />
+                    <BookingDonut paid={paid} pending={pending} cancelled={cancelled} />
                 </div>
-
             </div>
-            {/* Activity */}
+
+            {/* Recent contact messages */}
             <div className="bg-white rounded-2xl border border-slate-100 p-5">
                 <div className="flex items-center justify-between mb-4">
                     <div>
-                        <h2 className="jakarta text-sm md:text-base font-semibold text-[#0d1f2d]">Recent activity</h2>
-                        <p className="text-[11px] md:text-[12px] font-semibold text-slate-500  mt-0.5">Latest updates</p>
+                        <h2 className="jakarta text-sm md:text-base font-semibold text-[#0d1f2d]">Recent messages</h2>
+                        <p className="text-[11px] md:text-[12px] font-semibold text-slate-500 mt-0.5">
+                            {unreadMessages > 0 ? `${unreadMessages} unread` : 'All caught up'}
+                        </p>
                     </div>
-                    <button className="text-xs md:text-[13px] font-semibold text-[#0A5482] hover:underline flex items-center gap-1">
+                    <Link href="/dashboard/contacts" className="text-xs md:text-[13px] font-semibold text-[#0A5482] hover:underline flex items-center gap-1">
                         See all <TbArrowRight className="text-xs md:text-sm" />
-                    </button>
+                    </Link>
                 </div>
-                {activity.map(({ text, time, bg, ic, icon: Icon }) => (
-                    <div key={text} className="flex items-start gap-3 py-2.5 border-b border-slate-50 last:border-0">
-                        <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg ${bg} ${ic} flex items-center justify-center shrink-0 mt-0.5`}>
-                            <Icon className="text-sm md:text-base" />
-                        </div>
-                        <div>
-                            <p className="text-[12px]  md:text-[13px] font-semibold text-slate-700 leading-relaxed">{text}</p>
-                            <p className="text-[11px] md:text-[12px] text-slate-500 mt-0.5">{time}</p>
-                        </div>
+                {contacts && contacts.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6">
+                        {contacts.slice(0, 6).map((c: any) => (
+                            <div key={c.id} className={`flex items-start gap-3 py-2.5 border-b border-slate-50 last:border-0 ${c.status === 'unread' ? 'bg-blue-50/30 -mx-2 px-2 rounded-lg' : ''}`}>
+                                <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${c.status === 'unread' ? 'bg-blue-50 text-blue-900' : 'bg-slate-50 text-slate-500'}`}>
+                                    <TbMail className="text-sm md:text-base" />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className={`text-[12px] md:text-[13px] font-semibold text-slate-700 truncate ${c.status === 'unread' ? 'text-[#0d1f2d]' : ''}`}>
+                                        {c.full_name ?? 'Unknown'}
+                                    </p>
+                                    <p className="text-[11px] md:text-[12px] text-slate-500 mt-0.5">
+                                        {formatDate(c.created_at)}
+                                    </p>
+                                </div>
+                                {c.status === 'unread' && (
+                                    <span className="ml-auto text-[9px] font-bold bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full shrink-0">New</span>
+                                )}
+                            </div>
+                        ))}
                     </div>
-                ))}
+                ) : (
+                    <p className="text-sm text-slate-400 text-center py-6">No messages yet.</p>
+                )}
             </div>
-        </div >
+
+        </div>
     )
 }
