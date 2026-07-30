@@ -1,6 +1,10 @@
 import React from 'react'
 import { FaWhatsapp } from 'react-icons/fa'
+import DOMPurify from 'isomorphic-dompurify'
 import TripTabs from './TripTabs'
+import { CircleCheck } from 'lucide-react'
+
+type ItineraryDay = { day: number; title: string; description: string; highlights?: string }
 
 type Trek = {
   description: string
@@ -8,10 +12,20 @@ type Trek = {
   group_size: string | null
   best_season: string[] | null
   difficulty: string
-  includes: string[] | null
-  excludes: string[] | null
+  includes: string | null
+  excludes: string | null
   highlights: string[] | null
-  itinerary: { day: number; title: string; description: string }[] | null
+  itinerary: ItineraryDay[] | null
+}
+
+// Centralized sanitize + render for rich-text HTML fields (includes, excludes)
+function SafeHtml({ html, className }: { html: string; className?: string }) {
+  return (
+    <ul
+      className={`space-y-2 [&_ul]:list-none [&_li]:flex [&_li]:gap-2 [&_li]:items-center ${className ?? ''}`}
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }}
+    />
+  )
 }
 
 const Description = ({ trek }: { trek: Trek }) => {
@@ -29,37 +43,27 @@ const Description = ({ trek }: { trek: Trek }) => {
         <p>{trek.description}</p>
       </div>
 
-      {/* Include / Exclude */}
-      {((trek.includes && trek.includes.length > 0) || (trek.excludes && trek.excludes.length > 0)) && (
+      {/* Include / Exclude — now rich text HTML, sanitized before render */}
+      {(trek.includes || trek.excludes) && (
         <div className="flex flex-col gap-2 py-10">
           <h2 className="text-[#0B2839] lg:text-[19px] md:text-[17px] text-[15px] font-semibold">
             Include/Exclude
           </h2>
           <div className="grid sm:grid-cols-2 gap-6 mt-1">
-            {trek.includes && trek.includes.length > 0 && (
+            {trek.includes && (
               <div>
-                <h3 className="font-semibold lg:text-base md:text-sm text-xs mb-3">Cost Includes</h3>
-                <ul className="space-y-2 text-green-600">
-                  {trek.includes.map((item, i) => (
-                    <li key={i} className="flex gap-2 items-center">
-                      <img src="/images/icons/rightIcon.svg" alt="Check" className="w-4 h-4" />
-                      <span className="lg:text-[15px] md:text-[13px] text-[11px] text-[#7F7F7F]">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+                <h3 className="flex flex-row gap-2 font-semibold lg:text-base md:text-sm text-xs mb-3"><img src="/images/icons/rightIcon.svg" />Cost Includes</h3>
+                <div className="text-green-600 lg:text-[15px] md:text-[13px] text-[11px] [&_*]:text-[#7F7F7F]">
+                  <SafeHtml html={trek.includes} />
+                </div>
               </div>
             )}
-            {trek.excludes && trek.excludes.length > 0 && (
+            {trek.excludes && (
               <div>
-                <h3 className="font-semibold lg:text-base md:text-sm text-xs mb-3">Cost Excludes</h3>
-                <ul className="space-y-2 text-red-600">
-                  {trek.excludes.map((item, i) => (
-                    <li key={i} className="flex gap-2 items-center">
-                      <img src="/images/icons/wrongIcon.svg" alt="X" className="w-4 h-4" />
-                      <span className="lg:text-[15px] md:text-[13px] text-[11px] text-[#7F7F7F]">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+                <h3 className="flex flex-row gap-2 font-semibold lg:text-base md:text-sm text-xs mb-3"><img src="/images/icons/wrongIcon.svg" />Cost Excludes</h3>
+                <div className="text-red-600 lg:text-[15px] md:text-[13px] text-[11px] [&_*]:text-[#7F7F7F]">
+                  <SafeHtml html={trek.excludes} />
+                </div>
               </div>
             )}
           </div>
@@ -88,7 +92,7 @@ const Description = ({ trek }: { trek: Trek }) => {
 
       <TripTabs trek={trek} />
 
-      {/* Highlights */}
+      {/* Highlights (trip-level, plain array — unchanged) */}
       {trek.highlights && trek.highlights.length > 0 && (
         <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mb-6 mt-6">
           <h3 className="font-semibold text-green-700 mb-2 lg:text-base md:text-[15px] text-sm">

@@ -7,31 +7,7 @@ import { TbPlus, TbEdit, TbTrash, TbEye, TbSearch, TbMountain, TbClock, TbUsers 
 import { deleteTrek } from '../actions'
 import DeleteModal from '../../blogs/new/DeleteModal'
 import ViewTrekModal from './ViewTrekModal'
-
-type ItineraryDay = { day: number; title: string; description: string }
-
-type Trek = {
-    id: string
-    name: string
-    slug: string
-    description: string
-    duration_days: number
-    difficulty: string
-    max_altitude: number | null
-    price_adult: number
-    price_child: number | null
-    category: string
-    cover_image: string | null
-    gallery: string[] | null
-    highlights: string[] | null
-    itinerary: ItineraryDay[] | null
-    includes: string[] | null
-    excludes: string[] | null
-    best_season: string[] | null
-    group_size: string | null
-    status: 'active' | 'inactive'
-    created_at: string
-}
+import { Trek } from '../type'
 
 const statusStyle: Record<string, string> = {
     active: 'bg-green-50 text-green-800',

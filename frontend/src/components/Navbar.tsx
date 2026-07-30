@@ -370,6 +370,15 @@ const Navbar = ({ treks }: { treks: TrekNavItem[] }) => {
                 Contact Us
               </Link>
             </div>
+            <div className="flex flex-col gap-2 pt-2">
+              <Link
+                href="/login"
+                className="bg-[#D5E880] hover:bg-yellow-400 text-gray-800 px-4 py-2 rounded-md font-medium transition-colors text-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login
+              </Link>
+            </div>
           </div>
         </div>
       )}

@@ -6,12 +6,14 @@ import { TbArrowLeft, TbPhoto, TbX, TbLoader2 } from 'react-icons/tb'
 import { createBlog } from '../actions'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import MasterRichTextEditor from '@/components/MasterRichTextEditor'
 
 export default function NewBlogPage() {
     const [coverPreview, setCoverPreview] = useState<string | null>(null)
     const [coverFile, setCoverFile] = useState<File | null>(null)
     const [title, setTitle] = useState('')
     const [slug, setSlug] = useState('')
+    const [content, setContent] = useState('')
     const [isPending, startTransition] = useTransition()
     const [error, setError] = useState<string | null>(null)
     const [pendingStatus, setPendingStatus] = useState<'draft' | 'published' | null>(null)
@@ -36,6 +38,7 @@ export default function NewBlogPage() {
         const formEl = e.currentTarget
         const formData = new FormData(formEl)
         formData.set('status', status)
+        formData.set('content', content)
         if (coverFile) {
             formData.set('cover_image', coverFile)
         }
@@ -147,19 +150,11 @@ export default function NewBlogPage() {
 
                     <div className="bg-white rounded-2xl border border-slate-100 p-5">
                         <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-3">Content</label>
-                        <div className="flex flex-wrap gap-1 mb-3 pb-3 border-b border-slate-100">
-                            {['B', 'I', 'U', 'H1', 'H2', '• List', '" Quote', '🔗'].map((t) => (
-                                <button key={t} type="button" className="px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 border border-slate-100 transition">
-                                    {t}
-                                </button>
-                            ))}
-                        </div>
-                        <textarea
-                            name="content"
-                            required
-                            rows={14}
+                        <MasterRichTextEditor
+                            variant="full"
+                            value={content}
+                            onChange={setContent}
                             placeholder="Write your blog post here..."
-                            className="w-full text-sm text-slate-700 outline-none resize-none leading-relaxed placeholder:text-slate-300"
                         />
                     </div>
 

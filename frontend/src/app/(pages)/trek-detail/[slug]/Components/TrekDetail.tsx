@@ -1,4 +1,4 @@
-import { Trek } from "../page";
+import { Trek } from "@/app/(pages)/dashboard/treks/type";
 import Description from "./Description";
 import ImageAndOfferSection from "./ImageAndOfferSection";
 import Pricing from "./Pricing";

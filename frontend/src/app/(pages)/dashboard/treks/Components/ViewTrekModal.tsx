@@ -1,30 +1,8 @@
 // app/(pages)/dashboard/treks/ViewTrekModal.tsx
 'use client'
 import { TbX, TbClock, TbMountain, TbUsers, TbCheck, TbCircleX, TbCalendarEvent } from 'react-icons/tb'
-
-type ItineraryDay = { day: number; title: string; description: string }
-
-type Trek = {
-    id: string
-    name: string
-    slug: string
-    description: string
-    duration_days: number
-    difficulty: string
-    max_altitude: number | null
-    price_adult: number
-    price_child: number | null
-    category: string
-    cover_image: string | null
-    gallery: string[] | null
-    highlights: string[] | null
-    itinerary: ItineraryDay[] | null
-    includes: string[] | null
-    excludes: string[] | null
-    best_season: string[] | null
-    group_size: string | null
-    status: 'active' | 'inactive'
-}
+import DOMPurify from 'isomorphic-dompurify'
+import { Trek } from '../type'
 
 const statusStyle: Record<string, string> = {
     active: 'bg-green-50 text-green-800',
@@ -36,6 +14,16 @@ const difficultyStyle: Record<string, string> = {
     moderate: 'bg-amber-50 text-amber-800',
     difficult: 'bg-orange-50 text-orange-800',
     strenuous: 'bg-red-50 text-red-800',
+}
+
+// Centralized sanitize + render for rich-text HTML fields (includes, excludes, per-day highlights)
+function SafeHtml({ html, className }: { html: string; className?: string }) {
+    return (
+        <div
+            className={`prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 ${className ?? ''}`}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }}
+        />
+    )
 }
 
 export default function ViewTrekModal({ trek, onClose }: { trek: Trek; onClose: () => void }) {
@@ -113,7 +101,7 @@ export default function ViewTrekModal({ trek, onClose }: { trek: Trek; onClose: 
                         <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{trek.description}</p>
                     </div>
 
-                    {/* Highlights */}
+                    {/* Highlights (trip-level, plain tags — unchanged) */}
                     {trek.highlights && trek.highlights.length > 0 && (
                         <div>
                             <h3 className="text-sm font-semibold text-[#0d1f2d] mb-2">Highlights</h3>
@@ -141,7 +129,10 @@ export default function ViewTrekModal({ trek, onClose }: { trek: Trek; onClose: 
                                             <p className="text-sm font-medium text-[#0d1f2d]">{d.title}</p>
                                         </div>
                                         {d.description && (
-                                            <p className="text-xs text-slate-500 leading-relaxed pl-1">{d.description}</p>
+                                            <p className="text-xs text-slate-500 leading-relaxed pl-1 mb-2">{d.description}</p>
+                                        )}
+                                        {d.highlights && (
+                                            <SafeHtml html={d.highlights} className="pl-1 text-xs text-slate-600" />
                                         )}
                                     </div>
                                 ))}
@@ -149,31 +140,23 @@ export default function ViewTrekModal({ trek, onClose }: { trek: Trek; onClose: 
                         </div>
                     )}
 
-                    {/* Includes / Excludes */}
-                    {((trek.includes && trek.includes.length > 0) || (trek.excludes && trek.excludes.length > 0)) && (
+                    {/* Includes / Excludes — rich text HTML, sanitized before render */}
+                    {(trek.includes || trek.excludes) && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {trek.includes && trek.includes.length > 0 && (
+                            {trek.includes && (
                                 <div>
-                                    <h3 className="text-sm font-semibold text-[#0d1f2d] mb-2">Includes</h3>
-                                    <ul className="space-y-1.5">
-                                        {trek.includes.map((item) => (
-                                            <li key={item} className="flex items-start gap-2 text-xs text-slate-600">
-                                                <TbCheck className="text-green-600 mt-0.5 shrink-0" /> {item}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <h3 className="text-sm font-semibold text-[#0d1f2d] mb-2 flex items-center gap-1.5">
+                                        <TbCheck className="text-green-600" /> Includes
+                                    </h3>
+                                    <SafeHtml html={trek.includes} className="text-xs text-slate-600" />
                                 </div>
                             )}
-                            {trek.excludes && trek.excludes.length > 0 && (
+                            {trek.excludes && (
                                 <div>
-                                    <h3 className="text-sm font-semibold text-[#0d1f2d] mb-2">Excludes</h3>
-                                    <ul className="space-y-1.5">
-                                        {trek.excludes.map((item) => (
-                                            <li key={item} className="flex items-start gap-2 text-xs text-slate-600">
-                                                <TbCircleX className="text-red-500 mt-0.5 shrink-0" /> {item}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <h3 className="text-sm font-semibold text-[#0d1f2d] mb-2 flex items-center gap-1.5">
+                                        <TbCircleX className="text-red-500" /> Excludes
+                                    </h3>
+                                    <SafeHtml html={trek.excludes} className="text-xs text-slate-600" />
                                 </div>
                             )}
                         </div>

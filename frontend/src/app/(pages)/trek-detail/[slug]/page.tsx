@@ -6,28 +6,8 @@ import ContactUs from "../../aboutus/Components/ContactUs";
 import { TrekDetail } from "./Components/TrekDetail";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { Trek } from "../../dashboard/treks/type";
 
-export type Trek = {
-    id: string
-    name: string
-    slug: string
-    description: string
-    duration_days: number
-    difficulty: string
-    max_altitude: number | null
-    price_adult: number
-    price_child: number | null
-    category: string
-    cover_image: string | null
-    gallery: string[] | null
-    highlights: string[] | null
-    itinerary: { day: number; title: string; description: string }[] | null
-    includes: string[] | null
-    excludes: string[] | null
-    best_season: string[] | null
-    group_size: string | null
-    status: string
-}
 
 export default async function TrekDetailPage({
     params,

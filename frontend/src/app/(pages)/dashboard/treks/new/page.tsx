@@ -14,12 +14,8 @@ import {
     TbGripVertical,
 } from 'react-icons/tb'
 import { createTrek } from '../actions'
-
-type ItineraryDay = {
-    day: number
-    title: string
-    description: string
-}
+import RichTextEditor from '@/components/RichTextEditor'
+import { ItineraryDay } from '../type'
 
 export default function NewTrekPage() {
     const router = useRouter()
@@ -28,6 +24,8 @@ export default function NewTrekPage() {
 
     const [name, setName] = useState('')
     const [slug, setSlug] = useState('')
+    const [includes, setIncludes] = useState('')
+    const [excludes, setExcludes] = useState('')
 
     const [coverPreview, setCoverPreview] = useState<string | null>(null)
     const [coverFile, setCoverFile] = useState<File | null>(null)
@@ -36,7 +34,7 @@ export default function NewTrekPage() {
     const [galleryPreviews, setGalleryPreviews] = useState<string[]>([])
 
     const [itinerary, setItinerary] = useState<ItineraryDay[]>([
-        { day: 1, title: '', description: '' },
+        { day: 1, title: '', description: '', highlights: '' },
     ])
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +67,7 @@ export default function NewTrekPage() {
     const addItineraryDay = () => {
         setItinerary((prev) => [
             ...prev,
-            { day: prev.length + 1, title: '', description: '' },
+            { day: prev.length + 1, title: '', description: '', highlights: '' },
         ])
     }
 
@@ -81,7 +79,7 @@ export default function NewTrekPage() {
         )
     }
 
-    const updateItineraryDay = (index: number, field: 'title' | 'description', value: string) => {
+    const updateItineraryDay = (index: number, field: 'title' | 'description' | 'highlights', value: string) => {
         setItinerary((prev) =>
             prev.map((d, i) => (i === index ? { ...d, [field]: value } : d))
         )
@@ -91,6 +89,9 @@ export default function NewTrekPage() {
         const formData = new FormData(formEl)
         formData.set('status', status)
         formData.set('itinerary', JSON.stringify(itinerary.filter((d) => d.title.trim())))
+
+        formData.set('includes', includes)
+        formData.set('excludes', excludes)
 
         if (coverFile) {
             formData.set('cover_image', coverFile)
@@ -253,6 +254,16 @@ export default function NewTrekPage() {
                                         rows={2}
                                         className="w-full text-xs text-slate-600 outline-none resize-none leading-relaxed placeholder:text-slate-300 bg-transparent pl-7"
                                     />
+                                    <div className="pl-7 mt-2">
+                                        <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                                            Highlights
+                                        </label>
+                                        <RichTextEditor
+                                            value={dayItem.highlights}
+                                            onChange={(html) => updateItineraryDay(index, 'highlights', html)}
+                                            placeholder="Key highlights for this day..."
+                                        />
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -411,20 +422,31 @@ export default function NewTrekPage() {
                             </div>
                             <div>
                                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">Includes</label>
-                                <input
+                                {/* <input
                                     name="includes"
                                     type="text"
                                     placeholder="Permits, guide, meals during trek..."
                                     className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 outline-none bg-slate-50 placeholder:text-slate-300"
+                                /> */}
+                                <RichTextEditor
+                                    value={includes}
+                                    onChange={setIncludes}
+                                    placeholder="Permits, guide, meals during trek..."
                                 />
                             </div>
                             <div>
                                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">Excludes</label>
-                                <input
+                                {/* <input
                                     name="excludes"
                                     type="text"
                                     placeholder="International flights, travel insurance..."
                                     className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 outline-none bg-slate-50 placeholder:text-slate-300"
+                                /> */}
+
+                                <RichTextEditor
+                                    value={excludes}
+                                    onChange={setExcludes}
+                                    placeholder="International flights, travel insurance..."
                                 />
                             </div>
                             <div>

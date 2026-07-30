@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { ChevronDown, MapPin } from 'lucide-react'
+import DOMPurify from 'isomorphic-dompurify'
 
 type ItineraryDay = {
   day: number
   title: string
   description: string
+  highlights?: string // rich text HTML from the editor; optional since older rows may not have it
 }
 
 const TrekItinerary = ({ itinerary }: { itinerary: ItineraryDay[] }) => {
@@ -45,7 +47,7 @@ const TrekItinerary = ({ itinerary }: { itinerary: ItineraryDay[] }) => {
               onClick={() => setExpanded(idx === expanded ? -1 : idx)}
             >
               <p>{`Day ${item.day}: ${item.title}`}</p>
-              {item.description && (
+              {(item.description || item.highlights) && (
                 <ChevronDown
                   className={`w-4 h-4 transition-transform ${expanded === idx ? 'rotate-180' : ''}`}
                 />
@@ -53,10 +55,20 @@ const TrekItinerary = ({ itinerary }: { itinerary: ItineraryDay[] }) => {
             </div>
 
             {/* Expanded Content */}
-            {expanded === idx && item.description && (
-              <p className="ml-5 mt-2 text-sm text-gray-600 leading-relaxed">
-                {item.description}
-              </p>
+            {expanded === idx && (
+              <div className="ml-5 mt-2 space-y-3">
+                {item.description && (
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {item.description}
+                  </p>
+                )}
+                {item.highlights && (
+                  <div
+                    className="text-sm text-gray-600 leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-1"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.highlights) }}
+                  />
+                )}
+              </div>
             )}
 
             <div className="mt-4 border-b border-gray-200" />

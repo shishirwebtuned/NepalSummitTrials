@@ -81,8 +81,11 @@ export async function createTrek(formData: FormData) {
     gallery: galleryUrls,
     highlights: parseListField(formData, "highlights"),
     itinerary: parseItinerary(formData),
-    includes: parseListField(formData, "includes"),
-    excludes: parseListField(formData, "excludes"),
+    // includes: parseListField(formData, "includes"),
+    // excludes: parseListField(formData, "excludes"),
+
+    includes: (formData.get("includes") as string) || null,
+    excludes: (formData.get("excludes") as string) || null,
     best_season: parseListField(formData, "best_season"),
     group_size: formData.get("group_size") || null,
     status: formData.get("status"),
@@ -141,8 +144,12 @@ export async function updateTrek(id: string, formData: FormData) {
     gallery: [...keptGallery, ...newGalleryUrls],
     highlights: parseListField(formData, "highlights"),
     itinerary: parseItinerary(formData),
-    includes: parseListField(formData, "includes"),
-    excludes: parseListField(formData, "excludes"),
+    // includes: parseListField(formData, "includes"),
+    // excludes: parseListField(formData, "excludes"),
+
+    includes: (formData.get("includes") as string) || null,
+    excludes: (formData.get("excludes") as string) || null,
+
     best_season: parseListField(formData, "best_season"),
     group_size: formData.get("group_size") || null,
     status: formData.get("status"),

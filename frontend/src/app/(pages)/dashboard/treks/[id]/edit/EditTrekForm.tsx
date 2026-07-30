@@ -14,34 +14,8 @@ import {
     TbGripVertical,
 } from 'react-icons/tb'
 import { updateTrek } from '../../actions'
-
-type ItineraryDay = {
-    day: number
-    title: string
-    description: string
-}
-
-type Trek = {
-    id: string
-    name: string
-    slug: string
-    description: string
-    duration_days: number
-    difficulty: string
-    max_altitude: number | null
-    price_adult: number
-    price_child: number | null
-    category: string
-    cover_image: string | null
-    gallery: string[] | null
-    highlights: string[] | null
-    itinerary: ItineraryDay[] | null
-    includes: string[] | null
-    excludes: string[] | null
-    best_season: string[] | null
-    group_size: string | null
-    status: 'active' | 'inactive'
-}
+import RichTextEditor from '@/components/RichTextEditor'
+import { ItineraryDay, Trek } from '../../type'
 
 export default function EditTrekForm({ trek }: { trek: Trek }) {
     const router = useRouter()
@@ -64,9 +38,13 @@ export default function EditTrekForm({ trek }: { trek: Trek }) {
     // Itinerary
     const [itinerary, setItinerary] = useState<ItineraryDay[]>(
         trek.itinerary && trek.itinerary.length > 0
-            ? trek.itinerary
-            : [{ day: 1, title: '', description: '' }]
+            ? trek.itinerary.map((d) => ({ ...d, highlights: d.highlights ?? '' }))
+            : [{ day: 1, title: '', description: '', highlights: '' }]
     )
+
+    // Includes / excludes — now plain text (HTML from rich text editor), not arrays
+    const [includes, setIncludes] = useState(trek.includes ?? '')
+    const [excludes, setExcludes] = useState(trek.excludes ?? '')
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value)
@@ -105,7 +83,10 @@ export default function EditTrekForm({ trek }: { trek: Trek }) {
     }
 
     const addItineraryDay = () => {
-        setItinerary((prev) => [...prev, { day: prev.length + 1, title: '', description: '' }])
+        setItinerary((prev) => [
+            ...prev,
+            { day: prev.length + 1, title: '', description: '', highlights: '' },
+        ])
     }
 
     const removeItineraryDay = (index: number) => {
@@ -114,7 +95,11 @@ export default function EditTrekForm({ trek }: { trek: Trek }) {
         )
     }
 
-    const updateItineraryDay = (index: number, field: 'title' | 'description', value: string) => {
+    const updateItineraryDay = (
+        index: number,
+        field: 'title' | 'description' | 'highlights',
+        value: string
+    ) => {
         setItinerary((prev) => prev.map((d, i) => (i === index ? { ...d, [field]: value } : d)))
     }
 
@@ -123,6 +108,8 @@ export default function EditTrekForm({ trek }: { trek: Trek }) {
         formData.set('status', status)
         formData.set('itinerary', JSON.stringify(itinerary.filter((d) => d.title.trim())))
         formData.set('existing_gallery', JSON.stringify(existingGallery))
+        formData.set('includes', includes)
+        formData.set('excludes', excludes)
 
         if (coverFile) {
             formData.set('cover_image', coverFile)
@@ -296,6 +283,16 @@ export default function EditTrekForm({ trek }: { trek: Trek }) {
                                         rows={2}
                                         className="w-full text-xs text-slate-600 outline-none resize-none leading-relaxed placeholder:text-slate-300 bg-transparent pl-7"
                                     />
+                                    <div className="pl-7 mt-2">
+                                        <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                                            Highlights
+                                        </label>
+                                        <RichTextEditor
+                                            value={dayItem.highlights}
+                                            onChange={(html) => updateItineraryDay(index, 'highlights', html)}
+                                            placeholder="Key highlights for this day..."
+                                        />
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -474,22 +471,18 @@ export default function EditTrekForm({ trek }: { trek: Trek }) {
                             </div>
                             <div>
                                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">Includes</label>
-                                <input
-                                    name="includes"
-                                    type="text"
-                                    defaultValue={trek.includes?.join(', ') ?? ''}
+                                <RichTextEditor
+                                    value={includes}
+                                    onChange={setIncludes}
                                     placeholder="Permits, guide, meals during trek..."
-                                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 outline-none bg-slate-50 placeholder:text-slate-300"
                                 />
                             </div>
                             <div>
                                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">Excludes</label>
-                                <input
-                                    name="excludes"
-                                    type="text"
-                                    defaultValue={trek.excludes?.join(', ') ?? ''}
+                                <RichTextEditor
+                                    value={excludes}
+                                    onChange={setExcludes}
                                     placeholder="International flights, travel insurance..."
-                                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 outline-none bg-slate-50 placeholder:text-slate-300"
                                 />
                             </div>
                             <div>

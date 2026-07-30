@@ -8,8 +8,8 @@ import TrekItinerary from './TrekItinerary'
 import Checklist from './Checklist'
 // import Reviews from './Reviews'
 import GalleryBentoGrid from './Gallery'
+import { ItineraryDay } from '@/app/(pages)/dashboard/treks/type'
 
-type ItineraryDay = { day: number; title: string; description: string }
 
 type Trek = {
   description: string
