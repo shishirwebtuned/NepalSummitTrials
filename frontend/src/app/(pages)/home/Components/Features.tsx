@@ -4,87 +4,30 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-const Features = () => {
+interface Trek {
+  id: string;
+  name: string;
+  price_adult: string;
+  duration_days: number;
+  description: string;
+  cover_image: string;
+  slug: string;
+}
+
+interface FeaturesProps {
+  treks: Trek[];
+}
+
+
+const Features = ({ treks }: FeaturesProps) => {
+  const router = useRouter();
+
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const animationRef = useRef<number | null>(null);
 
-  const trails = [
-    {
-      id: 1,
-      name: "Everest Base Camp",
-      price: "$120.98",
-      days: 14,
-      description:
-        "Walk in the shadows of giants on one of the world's most iconic trails.",
-      image: "/images/Rectangle 19.png",
-    },
-    {
-      id: 2,
-      name: "Manaslu Circuit",
-      price: "$120.98",
-      days: 14,
-      description:
-        "Walk in the shadows of giants on one of the world's most iconic trails.",
-      image: "/images/Rectangle 19(1).png",
-    },
-    {
-      id: 3,
-      name: "Gokyo Valley Trek",
-      price: "$120.98",
-      days: 14,
-      description:
-        "Walk in the shadows of giants on one of the world's most iconic trails.",
-      image: "/images/Rectangle 19(3).png",
-    },
-    {
-      id: 4,
-      name: "Ama Dablam Trek",
-      price: "$120.98",
-      days: 14,
-      description:
-        "Walk in the shadows of giants on one of the world's most iconic trails.",
-      image: "/images/Rectangle 19(2).png",
-    },
-
-    {
-      id: 5,
-      name: "Everest Base Camp",
-      price: "$120.98",
-      days: 14,
-      description:
-        "Walk in the shadows of giants on one of the world's most iconic trails.",
-      image: "/images/Rectangle 19.png",
-    },
-    {
-      id: 6,
-      name: "Manaslu Circuit",
-      price: "$120.98",
-      days: 14,
-      description:
-        "Walk in the shadows of giants on one of the world's most iconic trails.",
-      image: "/images/Rectangle 19(1).png",
-    },
-    {
-      id: 7,
-      name: "Gokyo Valley Trek",
-      price: "$120.98",
-      days: 14,
-      description:
-        "Walk in the shadows of giants on one of the world's most iconic trails.",
-      image: "/images/Rectangle 19(3).png",
-    },
-    {
-      id: 8,
-      name: "Ama Dablam Trek",
-      price: "$120.98",
-      days: 14,
-      description:
-        "Walk in the shadows of giants on one of the world's most iconic trails.",
-      image: "/images/Rectangle 19(2).png",
-    },
-  ];
 
   const smoothScrollBy = useCallback((distance: number) => {
     const container = scrollContainerRef.current;
@@ -207,23 +150,24 @@ const Features = () => {
             className="overflow-x-auto scrollbar-hide"
           >
             <div className="flex gap-6 min-w-fit px-1">
-              {trails.map((trail) => (
+              {treks.slice(0, 8).map((trail) => (
                 <div
                   key={trail.id}
+                  onClick={() => router.push(`/trek-detail/${trail.slug}`)}
                   className="relative md:min-w-[280px] min-w-[240px] group transition-all ease-linear duration-700 cursor-pointer rounded-[106px] overflow-hidden"
                 >
                   <div className="relative flex items-end justify-center p-2 h-[400px] overflow-hidden">
                     <Image
-                      src={trail.image || "/placeholder.svg"}
+                      src={trail.cover_image || "/placeholder.svg"}
                       alt={trail.name}
                       fill
                       className="object-cover transition-transform duration-700 ease-in-out transform group-hover:scale-125 group-hover:translate-y-10 group-hover:translate-x-4"
                     />
 
-                    <div className="relative px-4 py-4 text-center bg-[#E3E3E3] group-hover:bg-[#2A78A6] rounded-b-[106px] mb-1 mx-2 transition-all duration-700 ease-in-out">
+                    <div className="relative px-4 py-4 text-center bg-[#E3E3E3] group-hover:bg-[#2A78A6] rounded-b-[106px] mb-1 mx-2 transition-all duration-700 ease-in-out w-full">
                       <div className="absolute bg-[#E3E3E3] group-hover:bg-[#2A78A6] rounded-full p-2 -top-6 left-1/2 transform -translate-x-1/2 transition-all duration-700 ease-in-out">
                         <div className="z-10 bg-[#2A78A6] group-hover:bg-white group-hover:text-[#2A78A6] text-white px-5 py-2 rounded-full text-sm font-bold shadow-md transition-all duration-700 ease-in-out">
-                          {trail.price}
+                          ${trail.price_adult}
                         </div>
                       </div>
 
@@ -232,13 +176,13 @@ const Features = () => {
                           size={16}
                           className="text-gray-700 group-hover:text-[#D5E880] transition-all duration-700 ease-in-out mr-1"
                         />
-                        {trail.days} Days
+                        {trail.duration_days} Days
                       </div>
 
-                      <h3 className="mb-1 text-sm font-bold text-black group-hover:text-white transition-all duration-700 ease-in-out">
+                      <h3 className="mb-1 text-sm font-bold text-black group-hover:text-white transition-all duration-700 ease-in-out line-clamp-1 min-h-[1.25rem]">
                         {trail.name}
                       </h3>
-                      <p className="mb-2 text-xs group-hover:text-white text-gray-600 transition-all duration-700 ease-in-out">
+                      <p className="mb-2 text-xs group-hover:text-white text-gray-600 transition-all duration-700 ease-in-out line-clamp-2 min-h-[2rem]">
                         {trail.description}
                       </p>
 

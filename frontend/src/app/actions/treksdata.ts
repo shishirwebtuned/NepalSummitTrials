@@ -11,3 +11,14 @@ export async function getTreksNav() {
 
   return data || [];
 }
+
+export async function getAllTreks() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("treks")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data;
+}

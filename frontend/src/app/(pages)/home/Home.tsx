@@ -14,13 +14,15 @@ import { NewsAndTrends } from "./Components/NewsAndTrends";
 import HoverpersonCard from "@/components/HoverPersonCard";
 import FAQ from "@/components/FAQ/FAQ";
 import VideoBanner from "./Components/VideoBanner";
+import { getAllTreks } from "@/app/actions/treksdata";
 
-const HomePage = () => {
+const HomePage = async () => {
+  const treks = await getAllTreks();
   return (
     <div>
       <Herosection />
       <Aboutus />
-      <Features />
+      <Features treks={treks} />
 
       <VideoBanner />
       {/* <Offer /> */}
@@ -28,7 +30,7 @@ const HomePage = () => {
       {/* <HomeBanner /> */}
       {/* <Blankone /> */}
       <OurTeam />
-      <Offerg />
+      <Offerg treks={treks} />
       {/* <WhyChoose /> */}
       <Cardimages />
       <Testimonials />

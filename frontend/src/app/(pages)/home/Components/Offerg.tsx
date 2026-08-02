@@ -1,51 +1,30 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-const Offerg = () => {
-  const places = [
-    {
-      placename: "Tiger Monastery Paro",
-      expenses: "Starts from $120",
-      days: "14 Days",
-      image: "/images/Rectangle 22021(5).png",
-      colSpan: "sm:col-span-2", // Large card
-    },
-    {
-      placename: "Everest Base Camp",
-      expenses: "Starts from $180",
-      days: "14 Days",
-      image: "/images/Rectangle 22021(1).png",
-      colSpan: "sm:col-span-1",
-    },
-    {
-      placename: "Everest Base Camp",
-      expenses: "Starts from $150",
-      days: "10 Days",
-      image: "/images/Rectangle 22021(2).png",
-      colSpan: "sm:col-span-1",
-    },
-    {
-      placename: "Everest Base Camp",
-      expenses: "Starts from $120",
-      days: "14 Days",
-      image: "/images/Rectangle 22021(3).png",
-      colSpan: "sm:col-span-1",
-    },
-    {
-      placename: "Makkinath",
-      expenses: "Starts from $140",
-      days: "5 Days",
-      image: "/images/Rectangle 22021(4).png",
-      colSpan: "sm:col-span-1",
-    },
-    {
-      placename: "Annapurna Base Camp",
-      expenses: "Starts from $100",
-      days: "8 Days",
-      image: "/images/Rectangle 22021.png",
-      colSpan: "sm:col-span-2", // Wide card
-    },
-  ];
+import { useRouter } from "next/navigation";
+
+interface Trek {
+  id: string;
+  name: string;
+  slug: string;
+  price_adult: string;
+  duration_days: number;
+  cover_image: string;
+}
+
+interface OffergProps {
+  treks: Trek[];
+}
+
+const Offerg = ({ treks }: OffergProps) => {
+  const router = useRouter();
+
+  const displayedTreks = treks.slice(0, 6);
+
+  const getColSpan = (index: number) => {
+    const pos = index % 6;
+    return pos === 0 || pos === 5 ? "sm:col-span-2" : "sm:col-span-1";
+  };
 
   return (
     <div className="relative z-10 max-w-7xl px-4 py-16 mx-auto">
@@ -70,16 +49,16 @@ const Offerg = () => {
 
       {/* Grid Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {places.map((place, index) => (
+        {displayedTreks.map((trek, index) => (
           <div
-            key={index}
-            className={`${place.colSpan} relative overflow-hidden rounded-lg group`}
+            key={trek.id}
+            className={`${getColSpan(index)} relative overflow-hidden rounded-lg group`}
           >
             {/* Image */}
             <div className="h-[312px] w-full overflow-hidden">
               <img
-                src={place.image}
-                alt={place.placename}
+                src={trek.cover_image}
+                alt={trek.name}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
             </div>
@@ -102,7 +81,7 @@ const Offerg = () => {
                   transition={{ duration: 0.5 }}
                 >
                   <h3 className="text-white text-lg md:text-[22px] lg:text-[26px] gloock font-medium">
-                    {place.placename}
+                    {trek.name}
                   </h3>
                   <div className="flex items-center text-white mt-1">
                     <img
@@ -111,7 +90,7 @@ const Offerg = () => {
                       className="mr-2 lg:w-5 lg:h-5 md:w-4 md:h-4 w-4 h-4"
                     />
                     <p className="lg:text-[17px] md:text-[15px] text-[13px] jakarta">
-                      {place.expenses}
+                      Starts from ${trek.price_adult}
                     </p>
                   </div>
                   <div className="flex items-center text-white mt-1">
@@ -121,7 +100,7 @@ const Offerg = () => {
                       className="mr-2 lg:w-5 lg:h-5 md:w-4 md:h-4 w-4 h-4"
                     />
                     <p className="lg:text-[17px] md:text-[15px] text-[13px] jakarta">
-                      {place.days}
+                      {trek.duration_days} Days
                     </p>
                   </div>
                 </motion.div>
@@ -132,8 +111,9 @@ const Offerg = () => {
                     rest: { opacity: 0, y: 20 },
                     hover: { opacity: 1, y: 0 },
                   }}
+                  onClick={() => router.push(`/trek-detail/${trek.slug}`)}
                   transition={{ duration: 0.3, delay: 0.15 }}
-                  className="bg-[#D5E880] w-[150px] h-[55px] text-[18px] text-[#0D3A48] font-medium jakarata rounded-md flex justify-center items-center"
+                  className="bg-[#D5E880] w-[150px] h-[55px] text-[18px] text-[#0D3A48] font-medium jakarata rounded-md flex justify-center items-center cursor-pointer"
                 >
                   Explore Trek
                 </motion.div>
