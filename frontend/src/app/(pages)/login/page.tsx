@@ -82,12 +82,12 @@ const LoginPage = () => {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between">
+                            {/* <div className="flex items-center justify-between">
                                 <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
                                     <input type="checkbox" className="accent-[#0A5482]" /> Remember me
                                 </label>
                                 <Link href="/forgot-password" className="text-xs text-[#0A5482] hover:underline">Forgot password?</Link>
-                            </div>
+                            </div> */}
 
                             <button type="submit" className="w-full bg-[#D5E880] hover:bg-lime-300 transition text-[#2a3d00] font-medium py-2.5 rounded-lg flex items-center justify-center gap-2 cursor-pointer">
                                 Sign in <ArrowRight className="w-4 h-4" />
