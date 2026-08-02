@@ -3,11 +3,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+  /* --font-jakarta: "Plus Jakarta Sans", sans-serif; */
   --font-lora: "Lora", serif;
   --font-saira: "Saira Stencil One", sans-serif;
   --font-gloock: "Gloock", serif;
   --font-protest: "Protest Strike", sans-serif;
+}
+
+@theme {
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
 }
 
 .jakarta {

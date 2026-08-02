@@ -1,3 +1,5 @@
+'use client'
+
 import { FaTwitter, FaFacebookF, FaLinkedinIn } from 'react-icons/fa'
 import DOMPurify from 'isomorphic-dompurify'
 

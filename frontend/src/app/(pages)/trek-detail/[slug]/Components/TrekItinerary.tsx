@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react'
 import { ChevronDown, MapPin } from 'lucide-react'
 import DOMPurify from 'isomorphic-dompurify'

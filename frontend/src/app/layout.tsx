@@ -42,6 +42,7 @@ const protest = Protest_Strike({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-protest",
+  adjustFontFallback: false,
 });
 
 const amatry = localFont({
